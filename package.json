@@ -1,10 +1,12 @@
 {
   "name": "sso-login",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SSO登录组件",
   "main": "index.js",
   "keywords": [
-    "igroot"
+    "igroot",
+    "sso-login",
+    "sso"
   ],
   "license": "MIT",
   "dependencies": {
