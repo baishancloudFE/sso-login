@@ -1,6 +1,6 @@
 {
   "name": "sso-login",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "SSO登录组件",
   "main": "index.js",
   "keywords": [

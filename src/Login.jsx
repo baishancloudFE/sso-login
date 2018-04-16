@@ -90,7 +90,7 @@ class Login extends Component {
   redirectLogin() {
     const { serverLogin } = this.config
     const { apiDomain } = this.props
-    alert(apiDomain + serverLogin)
+
     location.assign(apiDomain + serverLogin)
   }
 
@@ -173,7 +173,6 @@ class Login extends Component {
             callback && callback(true)
             break
           case 1001:
-            alert('validateToken 1001')
             this.redirectLogin()
             break
           case -1:
