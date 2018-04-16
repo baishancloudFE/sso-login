@@ -1,102 +1,65 @@
 import React, { Component } from 'react'
-import { Spin } from 'igroot'
+import PropTypes from 'prop-types'
+import { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage } from './function'
+//                    _ooOoo_
+//                   o8888888o
+//                   88\" . \"88
+//                   (| 0_0 |)
+//                   O\\  =  /O
+//                ____/`---'\\____
+//              .'  \\\\|     |//  `.
+//             /  \\\\|||  :  |||//  \\
+//            /  _||||| -:- |||||-  \\
+//            |   | \\\\\\  -  /// |   |
+//            | \\_|  ''\\---/''  |   |
+//            \\  .-\\__  `-`  ___/-. /
+//          ___`. .'  /--.--\\  `. . __
+//       .\"\" '<  `.___\\_<|>_/___.'  >'\"\
+//      | | :  `- \\`.;`\\ _ /`;.`/ - ` : | |
+//      \\  \\ `-.   \\_ __\\ /__ _/   .-` /  /
+// ======`-.____`-.___\\_____/___.-`____.-'======
+//                    `=---='",
+// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//          佛祖保佑       永无BUG
 
-function parseUrlParams(url) {
-  const result = {}
-  const params = url.split('?')[1]
-
-  params && params.split('&').forEach(item => {
-    const pair = item.split('=')
-    result[pair[0]] = pair[1]
-  })
-
-  return result
+const defaultConfig = {
+  devLogin: 'http://test-roster.i.trpcdn.net/staff-center',
+  serverLogin: '/account/user/login',
+  serverView: '/account/user/view',
+  serverValidate: '/account/token/validate',
+  serverLogout: '/account/user/logout',
 }
 
-function removeParameter(str) {
-  return str.replace(/(^\?|&)ticket=[^&]*(&)?/g, function (p0, p1, p2) {
-    return p1 === '?' || p2 ? p1 : ''
-  })
-}
-
-function isEmpty(obj) {
-  for (const name in obj) {
-    return false
-  }
-
-  return true
-}
-
-function setLocalStorage(key, value) {
-  if (!window.localStorage) {
-    alert('浏览器不支持localstorage')
-    return false
-  }
-
-  const newValue = JSON.stringify(value)
-  window.localStorage.setItem(key, newValue)
-  // console.log(window.localStorage.getItem(key))
-}
-
-function getLocalStorage(key) {
-  if (!window.localStorage) {
-    alert('浏览器不支持localstorage')
-    return false
-  }
-
-  return JSON.parse(window.localStorage.getItem(key))
-}
-export default class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props)
 
-    const { env } = this.props
-    const host = location.host
-    let serverHost = ''
-    let serverEnv = ''
-    Object.keys(env).forEach(e => {
-      if (env[e].regex && env[e].host && host.match(env[e].regex)) {
-        serverHost = env[e].host
-        serverEnv = e
-      }
-    })
+    this.config = {
+      ...defaultConfig
+    }
 
     this.state = {
-      devLogin: 'http://test-roster.i.trpcdn.net/staff-center',
-      serverLogin: '/account/user/login',
-      serverView: '/account/user/view',
-      serverValidate: '/account/token/validate',
-      serverLogout: '/account/user/logout',
-      needReload: this.props.needReload,
-      serverHost,
-      serverEnv,
       isLogin: false
     }
   }
 
   componentWillMount() {
     this.login().then((isTokenValidate) => {
-      console.log(isTokenValidate)
       this.setState({ isLogin: isTokenValidate })
     })
   }
 
   render() {
     const { isLogin } = this.state
-    console.log('渲染父')
+    const { className, style } = this.props
     return (
-      <div style={{ width: '100%' }}>
-        <Spin spinning={!isLogin} tip="正在初始化您的用户信息..." size="large">
-          {this.props.children}
-        </Spin>
+      <div className={className} style={style}>
+        {isLogin && this.props.children}
       </div>
     )
   }
 
   login() {
-    const { serverHost, serverEnv, serverView, devLogin, serverLogin, serverLogout } = this.state
-    const { appId } = this.props
-
     return new Promise((resolve, reject) => {
       const jwtToken = getLocalStorage('jwtToken')
       const query = parseUrlParams(location.href)
@@ -125,21 +88,15 @@ export default class Login extends Component {
   }
 
   redirectLogin() {
-    const { serverHost, serverEnv, devLogin, serverLogin } = this.state
-    const { appId } = this.props
-
-    if (serverEnv === 'local') {
-      const callback = location.href
-      const redirectUrl = `${devLogin}?appId=${appId}&callback=${callback}`
-      location.assign(redirectUrl)
-    } else {
-      location.assign(serverHost + serverLogin)
-    }
+    const { serverLogin } = this.config
+    const { apiDomain } = this.props
+    alert(apiDomain + serverLogin)
+    location.assign(apiDomain + serverLogin)
   }
 
   checkLogin = (ticket, callback) => {
-    console.log('checkLogin')
-    const { serverView, serverHost, needReload } = this.state
+    const { serverView } = this.config
+    const { apiDomain, needReload, onLogin } = this.props
     const fetchInit = {
       method: 'GET',
       headers: {
@@ -147,7 +104,7 @@ export default class Login extends Component {
         'Content-Type': 'application/jsoncharset=utf-8'
       }
     }
-    const userInfoUrl = serverHost + serverView
+    const userInfoUrl = apiDomain + serverView
     const infoUrl = ticket ? (`${userInfoUrl}?ticket=${ticket}`) : userInfoUrl
 
     const getUserView = () => fetch(infoUrl, fetchInit)
@@ -156,7 +113,7 @@ export default class Login extends Component {
         const { data } = res
 
         // 执行用户的回调函数
-        this.props.callback.forEach(c => {
+        onLogin.forEach(c => {
           if (res.code === c.code) {
             c.function()
           }
@@ -176,15 +133,14 @@ export default class Login extends Component {
             }
             callback && callback(true)
             break
-          case 605:
+          case 605: // 无效的ticket(平台服务端拿到的ticket是空的)
             this.redirectLogin()
             break
           case -1:
-            getUserView()
+            getUserView()// ticket无效 则重新请求一次
             console.error(res.msg)
             break
         }
-
         return res
       })
       .catch((err) => {
@@ -192,9 +148,11 @@ export default class Login extends Component {
       })
     getUserView()
   }
+
+  // 验证 jwtToken 的有效性
   validateToken(callback) {
-    console.log('validateToken')
-    const { serverHost, serverValidate } = this.state
+    const { serverValidate } = this.config
+    const { apiDomain } = this.props
 
     const fetchInit = {
       method: 'GET',
@@ -205,7 +163,7 @@ export default class Login extends Component {
       }
     }
 
-    const validateUrl = serverHost + serverValidate
+    const validateUrl = apiDomain + serverValidate
 
     fetch(validateUrl, fetchInit)
       .then(res => res.json())
@@ -214,8 +172,9 @@ export default class Login extends Component {
           case 0:
             callback && callback(true)
             break
-          case 600:
-            this.logout()
+          case 1001:
+            alert('validateToken 1001')
+            this.redirectLogin()
             break
           case -1:
             callback && callback(false)
@@ -234,20 +193,29 @@ export default class Login extends Component {
 
   // 退出登录
   logout() {
-    const { serverHost, serverEnv, serverLogout, devLogin } = this.state
+    const { serverLogout, devLogin } = this.config
+    const { apiDomain } = this.props
 
-    const logoutUrl = serverHost + serverLogout
+    const logoutUrl = apiDomain + serverLogout
     localStorage.clear()
     location.assign(logoutUrl)
   }
-
-  getUserInfo() {
-    const userInfo = getLocalStorage('cname')
-    return userInfo
-  }
-
-  getMenuInfo() {
-    const menuInfo = getLocalStorage('menu')
-    return menuInfo
-  }
 }
+
+Login.PropTypes = {
+  needReload: PropTypes.bool,                       // 是否需要reload，项目中存在 SL过早实例化请求对象 的问题的，这一项需要传true
+  apiDomain: PropTypes.string.isRequired,           // 接口请求地址
+  onLogin: PropTypes.arrayOf(PropTypes.func),       // 在获取到用户信息后的特殊处理
+  className: PropTypes.string,                      // Login组件 的 className
+  style: PropTypes.object                           // Login组件 的 style
+}
+
+Login.defaultProps = {
+  needReload: false,
+  apiDomain: '',
+  onLogin: [],
+  className: '',
+  style: {}
+}
+
+export default Login
