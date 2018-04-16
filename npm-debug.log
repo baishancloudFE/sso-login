@@ -1,0 +1,105 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node@6/6.13.1/bin/node',
+1 verbose cli   '/usr/local/opt/node@6/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@3.10.10
+3 info using node@v6.13.1
+4 verbose publish [ '.' ]
+5 silly cache add args [ '.', null ]
+6 verbose cache add spec .
+7 silly cache add parsed spec Result {
+7 silly cache add   raw: '.',
+7 silly cache add   scope: null,
+7 silly cache add   escapedName: null,
+7 silly cache add   name: null,
+7 silly cache add   rawSpec: '.',
+7 silly cache add   spec: '/Users/fanyizhen/business/sso-login',
+7 silly cache add   type: 'directory' }
+8 verbose addLocalDirectory /Users/fanyizhen/.npm/sso-login/0.0.5/package.tgz not in flight; packing
+9 verbose correctMkdir /Users/fanyizhen/.npm correctMkdir not in flight; initializing
+10 info lifecycle sso-login@0.0.5~prepublish: sso-login@0.0.5
+11 silly lifecycle sso-login@0.0.5~prepublish: no script for prepublish, continuing
+12 verbose tar pack [ '/Users/fanyizhen/.npm/sso-login/0.0.5/package.tgz',
+12 verbose tar pack   '/Users/fanyizhen/business/sso-login' ]
+13 verbose tarball /Users/fanyizhen/.npm/sso-login/0.0.5/package.tgz
+14 verbose folder /Users/fanyizhen/business/sso-login
+15 verbose addLocalTarball adding from inside cache /Users/fanyizhen/.npm/sso-login/0.0.5/package.tgz
+16 verbose correctMkdir /Users/fanyizhen/.npm correctMkdir not in flight; initializing
+17 silly cache afterAdd sso-login@0.0.5
+18 verbose afterAdd /Users/fanyizhen/.npm/sso-login/0.0.5/package/package.json not in flight; writing
+19 verbose correctMkdir /Users/fanyizhen/.npm correctMkdir not in flight; initializing
+20 verbose afterAdd /Users/fanyizhen/.npm/sso-login/0.0.5/package/package.json written
+21 silly publish { name: 'sso-login',
+21 silly publish   version: '0.0.5',
+21 silly publish   description: 'SSO登录组件',
+21 silly publish   main: 'index.js',
+21 silly publish   keywords: [ 'igroot', 'sso-login', 'sso' ],
+21 silly publish   license: 'MIT',
+21 silly publish   dependencies: { igroot: '^0.3.5' },
+21 silly publish   devDependencies: { 'prop-types': '^15.6.1', react: '^16.0.0' },
+21 silly publish   readme: '# SSO-login 组件\r\n> 前端对接 SSO 的通用组件\r\n\r\n### 使用\r\n\r\n下载 npm 包\r\n```jsx\r\nnpm install --save sso-login\r\n```\r\n\r\n在代码中使用\r\n```jsx\r\nimport Login from \'sso-login\'\r\n\r\nReactDOM.render(\r\n  (\r\n    <Login\r\n    apiDomain={\'http://test.service.com\'}\r\n    needReload={true}>\r\n    {\r\n      // 您的业务组件\r\n    }\r\n  </Login >\r\n  ), mountNode)\r\n```\r\n\r\n### 开放属性\r\n\r\n| 参数        | 说明    |  类型  |  默认值\r\n| --------   | -----:   | :----: |  :----: |\r\n| apiDomain        | 必填，接口请求地址      |   string    | -\r\n| needReload | 是否需要reload，项目中存在 SL过早实例化请求对象 的问题的，这一项需要传true      |   boolean    | false\r\n| onLogin    |   在获取到用户信息后的特殊处理    |   [{code:xxx,function:()=>{}}]    | -\r\n| className    |   Login组件 的 className    |   string    | -\r\n| style    |   Login组件 的 style    |   object    | -\r\n',
+21 silly publish   readmeFilename: 'README.md',
+21 silly publish   gitHead: 'a9082cbc9ba57b8d5a69ac7b428f3a9755d36756',
+21 silly publish   _id: 'sso-login@0.0.5',
+21 silly publish   scripts: {},
+21 silly publish   _shasum: 'e55f95a2f75fc33f028f1c0ca0ce1010b76c192b',
+21 silly publish   _from: '.' }
+22 verbose getPublishConfig undefined
+23 silly mapToRegistry name sso-login
+24 silly mapToRegistry using default registry
+25 silly mapToRegistry registry https://registry.npmjs.org/
+26 silly mapToRegistry data Result {
+26 silly mapToRegistry   raw: 'sso-login',
+26 silly mapToRegistry   scope: null,
+26 silly mapToRegistry   escapedName: 'sso-login',
+26 silly mapToRegistry   name: 'sso-login',
+26 silly mapToRegistry   rawSpec: '',
+26 silly mapToRegistry   spec: 'latest',
+26 silly mapToRegistry   type: 'tag' }
+27 silly mapToRegistry uri https://registry.npmjs.org/sso-login
+28 verbose publish registryBase https://registry.npmjs.org/
+29 silly publish uploading /Users/fanyizhen/.npm/sso-login/0.0.5/package.tgz
+30 verbose request uri https://registry.npmjs.org/sso-login
+31 verbose request sending authorization for write operation
+32 info attempt registry request try #1 at 18:13:33
+33 verbose request using bearer token for auth
+34 verbose request id e0ade73e2a75c39a
+35 http request PUT https://registry.npmjs.org/sso-login
+36 http 400 https://registry.npmjs.org/sso-login
+37 verbose headers { 'content-type': 'application/json',
+37 verbose headers   'cache-control': 'max-age=300',
+37 verbose headers   'content-length': '87',
+37 verbose headers   'accept-ranges': 'bytes',
+37 verbose headers   date: 'Mon, 16 Apr 2018 10:13:38 GMT',
+37 verbose headers   via: '1.1 varnish',
+37 verbose headers   connection: 'keep-alive',
+37 verbose headers   'x-served-by': 'cache-nrt6123-NRT',
+37 verbose headers   'x-cache': 'MISS',
+37 verbose headers   'x-cache-hits': '0',
+37 verbose headers   'x-timer': 'S1523873617.811997,VS0,VE1787',
+37 verbose headers   vary: 'Accept-Encoding, Accept' }
+38 verbose request invalidating /Users/fanyizhen/.npm/registry.npmjs.org/sso-login on PUT
+39 error publish Failed PUT 400
+40 verbose stack Error: Cannot publish over previously published version "0.0.5". : sso-login
+40 verbose stack     at makeError (/usr/local/Cellar/node@6/6.13.1/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:302:12)
+40 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/Cellar/node@6/6.13.1/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:290:14)
+40 verbose stack     at Request._callback (/usr/local/Cellar/node@6/6.13.1/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:210:14)
+40 verbose stack     at Request.self.callback (/usr/local/Cellar/node@6/6.13.1/lib/node_modules/npm/node_modules/request/request.js:187:22)
+40 verbose stack     at emitTwo (events.js:106:13)
+40 verbose stack     at Request.emit (events.js:191:7)
+40 verbose stack     at Request.<anonymous> (/usr/local/Cellar/node@6/6.13.1/lib/node_modules/npm/node_modules/request/request.js:1048:10)
+40 verbose stack     at emitOne (events.js:96:13)
+40 verbose stack     at Request.emit (events.js:188:7)
+40 verbose stack     at IncomingMessage.<anonymous> (/usr/local/Cellar/node@6/6.13.1/lib/node_modules/npm/node_modules/request/request.js:969:12)
+41 verbose statusCode 400
+42 verbose pkgid sso-login
+43 verbose cwd /Users/fanyizhen/business/sso-login
+44 error Darwin 16.6.0
+45 error argv "/usr/local/Cellar/node@6/6.13.1/bin/node" "/usr/local/opt/node@6/bin/npm" "publish"
+46 error node v6.13.1
+47 error npm  v3.10.10
+48 error code E400
+49 error Cannot publish over previously published version "0.0.5". : sso-login
+50 error If you need help, you may report this error at:
+50 error     <https://github.com/npm/npm/issues>
+51 verbose exit [ 1, true ]

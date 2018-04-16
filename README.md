@@ -5,7 +5,7 @@
 
 下载 npm 包
 ```jsx
-npm install --save sso-login
+sl add -c sso-login
 ```
 
 在代码中使用
