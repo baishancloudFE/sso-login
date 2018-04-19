@@ -107,7 +107,7 @@ class Login extends Component {
     const userInfoUrl = apiDomain + serverView
     const infoUrl = ticket ? (`${userInfoUrl}?ticket=${ticket}`) : userInfoUrl
 
-    const getUserView = () => fetch(infoUrl, fetchInit)
+    fetch(infoUrl, fetchInit)
       .then(res => res.json())
       .then(res => {
         const { data } = res
@@ -133,12 +133,9 @@ class Login extends Component {
             }
             callback && callback(true)
             break
-          case 605: // 无效的ticket(平台服务端拿到的ticket是空的)
+          case 605:// 无效的ticket(平台服务端拿到的ticket是空的)
+          case -1: // 无效的ticket(ticket过期了，好像是10s过期，who cares，反正就是ticket不可用)
             this.redirectLogin()
-            break
-          case -1:
-            getUserView()// ticket无效 则重新请求一次
-            console.error(res.msg)
             break
         }
         return res
@@ -146,7 +143,6 @@ class Login extends Component {
       .catch((err) => {
         console.error('请求失败', err)
       })
-    getUserView()
   }
 
   // 验证 jwtToken 的有效性
