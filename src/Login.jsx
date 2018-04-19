@@ -210,7 +210,7 @@ Login.defaultProps = {
   apiDomain: '',
   onLogin: [],
   className: '',
-  style: {}
+  style: { height: '100%', width: '100%' }
 }
 
 export default Login
