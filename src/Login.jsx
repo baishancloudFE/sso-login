@@ -59,7 +59,7 @@ class Login extends Component {
           isLogin ? this.props.children :
             (
               <div id="loading-wrapper">
-                <div id="loading-text">LOGING</div>
+                <div id="loading-text">LOADING</div>
                 <div id="loading-content"></div>
               </div>
             )
@@ -211,7 +211,7 @@ Login.propTypes = {
   apiDomain: PropTypes.string.isRequired,           // 接口请求地址
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
   className: PropTypes.string,                      // Login组件 的 className
-  style: PropTypes.object                           // Login组件 的 style
+  style: PropTypes.object,                          // Login组件 的 style
 }
 
 Login.defaultProps = {
@@ -219,7 +219,7 @@ Login.defaultProps = {
   apiDomain: '',
   onLogin: [],
   className: '',
-  style: { height: '100%', width: '100%' }
+  style: { height: '100%', width: '100%' },
 }
 
 export default Login
