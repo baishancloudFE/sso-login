@@ -100,6 +100,7 @@ class Login extends Component {
     const { serverLogin } = this.config
     const { apiDomain } = this.props
 
+    window.localStorage.clear()
     location.assign(apiDomain + serverLogin)
   }
 
@@ -201,7 +202,7 @@ class Login extends Component {
     const { apiDomain } = this.props
 
     const logoutUrl = apiDomain + serverLogout
-    localStorage.clear()
+    window.localStorage.clear()
     location.assign(logoutUrl)
   }
 }
