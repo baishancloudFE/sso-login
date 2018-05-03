@@ -1,5 +1,6 @@
 import React from 'react'
 import Login from './Login'
+import './login.scss'
 
 const callbacks = [{
   code: 1003,
@@ -11,6 +12,13 @@ const callbacks = [{
 export default () => (
   <Login
     apiDomain={'http://172.18.11.112:23000'}
+    // needDefaultAnimation
+    animation={(
+      <div id="loading-wrapper">
+        <div id="loading-text">LOADING</div>
+        <div id="loading-content"></div>
+      </div>
+    )}
     onLogin={callbacks}>
     以下是从SSO获取到的您的用户信息：
     {

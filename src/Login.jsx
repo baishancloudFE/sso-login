@@ -52,17 +52,19 @@ class Login extends Component {
 
   render() {
     const { isLogin } = this.state
-    const { className, style } = this.props
+    const { className, style, needDefaultAnimation, animation } = this.props
+    const defaultAnimation = (
+      <div id="loading-wrapper">
+        <div id="loading-text">LOADING</div>
+        <div id="loading-content"></div>
+      </div>
+    )
     return (
       <div className={className} style={style}>
         {
-          isLogin ? this.props.children :
-            (
-              <div id="loading-wrapper">
-                <div id="loading-text">LOADING</div>
-                <div id="loading-content"></div>
-              </div>
-            )
+          isLogin ?
+            this.props.children :
+            (needDefaultAnimation ? defaultAnimation : (animation || null))
         }
       </div>
     )
@@ -213,6 +215,8 @@ Login.propTypes = {
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
   className: PropTypes.string,                      // Login组件 的 className
   style: PropTypes.object,                          // Login组件 的 style
+  needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画
+  animation: PropTypes.node
 }
 
 Login.defaultProps = {
@@ -221,6 +225,7 @@ Login.defaultProps = {
   onLogin: [],
   className: '',
   style: { height: '100%', width: '100%' },
+  needDefaultAnimation: false
 }
 
 export default Login
