@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage } from './function'
-import './login.scss'
+import './Login.scss'
+import { ContainerLayout } from './ContainerLayout/index'
+import { CheckPermission } from './CheckPermission'
 //                    _ooOoo_
 //                   o8888888o
 //                   88\" . \"88
@@ -30,8 +32,9 @@ const defaultConfig = {
   serverValidate: '/account/token/validate',
   serverLogout: '/account/user/logout',
 }
+const jwtToken = getLocalStorage('jwtToken')
 
-class Login extends Component {
+class Authorized extends Component {
   constructor(props) {
     super(props)
 
@@ -42,6 +45,20 @@ class Login extends Component {
     this.state = {
       isLogin: false
     }
+  }
+
+  static ContainerLayout = ContainerLayout
+  static CheckPermission = CheckPermission
+
+  static logout(domain) {
+    window.localStorage.clear()
+    window.location.assign(domain + '/account/user/logout')
+  }
+
+  static onTokenInvalid(domain, location) {
+    window.localStorage.clear()
+    setLocalStorage('currentRoute', location.hash.replace('#', ''))// token失效时记录当前页面路由
+    window.location.assign(domain + '/account/user/login')
   }
 
   componentWillMount() {
@@ -59,6 +76,7 @@ class Login extends Component {
         <div id="loading-content"></div>
       </div>
     )
+
     return (
       <div className={className} style={style}>
         {
@@ -72,7 +90,6 @@ class Login extends Component {
 
   login() {
     return new Promise((resolve, reject) => {
-      const jwtToken = getLocalStorage('jwtToken')
       const query = parseUrlParams(location.href)
       let ticket = null
 
@@ -91,6 +108,7 @@ class Login extends Component {
           resolve(isTokenValidate)
         })
       } else {
+        // resolve(true)
         this.validateToken((isTokenValidate) => {
           resolve(isTokenValidate)
         })
@@ -103,7 +121,9 @@ class Login extends Component {
     const { apiDomain } = this.props
 
     window.localStorage.clear()
+    setLocalStorage('currentRoute', window.location.hash.replace('#', ''))// token失效时记录当前页面路由
     location.assign(apiDomain + serverLogin)
+
   }
 
   checkLogin = (ticket, callback) => {
@@ -167,7 +187,7 @@ class Login extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/jsoncharset=utf-8',
-        'Authorization': `Bearer ${!!window.localStorage['jwtToken'] ? JSON.parse(window.localStorage['jwtToken']) : ''}`
+        'Authorization': `Bearer ${!!jwtToken ? jwtToken : ''}`
       }
     }
 
@@ -197,29 +217,23 @@ class Login extends Component {
         console.error('请求失败', err)
       })
   }
-
-  // 退出登录
-  logout() {
-    const { serverLogout, devLogin } = this.config
-    const { apiDomain } = this.props
-
-    const logoutUrl = apiDomain + serverLogout
+  logout = () => {
     window.localStorage.clear()
-    location.assign(logoutUrl)
+    window.location.assign(domain + '/account/user/logout')
   }
 }
 
-Login.propTypes = {
+Authorized.propTypes = {
   needReload: PropTypes.bool,                       // 是否需要reload，项目中存在 SL过早实例化请求对象 的问题的，这一项需要传true
   apiDomain: PropTypes.string.isRequired,           // 接口请求地址
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
   className: PropTypes.string,                      // Login组件 的 className
   style: PropTypes.object,                          // Login组件 的 style
   needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画
-  animation: PropTypes.node
+  animation: PropTypes.node                         // 自定义的加载动画
 }
 
-Login.defaultProps = {
+Authorized.defaultProps = {
   needReload: false,
   apiDomain: '',
   onLogin: [],
@@ -228,4 +242,4 @@ Login.defaultProps = {
   needDefaultAnimation: false
 }
 
-export default Login
+export default Authorized

@@ -9,3 +9,9 @@
 # 0.1.1
 > 2018.05.03
 > 开场动画可以自定义
+
+# 0.2.0
+> 2018.05.04
+> - 记录token失效前的浏览器地址
+> - 提供静态子组件 ContainerLayout 和 CheckPermission
+> - 提供静态方法 logout 和 onTokenInvalid

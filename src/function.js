@@ -32,7 +32,6 @@ function setLocalStorage(key, value) {
 
   const newValue = JSON.stringify(value)
   window.localStorage.setItem(key, newValue)
-  // console.log(window.localStorage.getItem(key))
 }
 
 function getLocalStorage(key) {
@@ -43,5 +42,20 @@ function getLocalStorage(key) {
 
   return JSON.parse(window.localStorage.getItem(key))
 }
+function urlToList(url) {
+  const urllist = url.split('/').filter(i => i);
+  return urllist.map((urlItem, index) => {
+    return `/${urllist.slice(0, index + 1).join('/')}`;
+  });
+}
 
-export { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage }
+const logout = (domain) => {
+  window.localStorage.clear()
+  window.location.assign(domain + '/account/user/logout');
+}
+const refreshUserInfo = (domain) => {
+  window.localStorage.clear()
+  window.location.assign(domain + '/account/user/login');
+}
+
+export { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage, urlToList, logout, refreshUserInfo }

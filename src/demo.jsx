@@ -1,6 +1,8 @@
 import React from 'react'
+import { Button, Icon } from 'igroot'
 import Login from './Login'
-import './login.scss'
+import './Login.scss'
+import { getLocalStorage } from './function'
 
 const callbacks = [{
   code: 1003,
@@ -9,26 +11,27 @@ const callbacks = [{
   }
 }]
 
-export default () => (
-  <Login
-    apiDomain={'http://172.18.11.112:23000'}
-    // needDefaultAnimation
-    animation={(
-      <div id="loading-wrapper">
-        <div id="loading-text">LOADING</div>
-        <div id="loading-content"></div>
-      </div>
-    )}
-    onLogin={callbacks}>
-    以下是从SSO获取到的您的用户信息：
-    {
-      Object.keys(localStorage).map(k => {
-        return <div style={{ textAlign: 'left', width: 1200 }}>
-          <span style={{ width: 100 }}>{k} : </span>
-          <span style={{ width: 1100 }}>{localStorage[k]}</span>
-          <hr />
+export default () => {
+  return (
+    <Login
+      apiDomain={'http://test-pps.i.trpcdn.net'}
+      needDefaultAnimation={false}
+      animation={(
+        <div id="loading-wrapper">
+          <div id="loading-text">LOADING</div>
+          <div id="loading-content"></div>
         </div>
-      })
-    }
-  </Login >
-)
+      )}
+      onLogin={callbacks}>
+      <Login.ContainerLayout
+        apiDomain='http://test-pps.i.trpcdn.net'
+        logo="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
+        appName="SSO登录测试"
+      >
+        <Login.CheckPermission apiName="customer">
+          <Button type="primary" size="large">测试接口权限控制</Button>
+        </Login.CheckPermission>
+      </Login.ContainerLayout>
+    </Login >
+  )
+}

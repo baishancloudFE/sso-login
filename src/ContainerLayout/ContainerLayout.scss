@@ -1,0 +1,83 @@
+
+#page{
+  .logo {
+    height: 64px;
+    position: relative;
+    line-height: 64px;
+    padding-left: (80px - 32px) / 2;
+    transition: all 0.3s;
+    background: #002140;
+    overflow: hidden;
+    img {
+      display: inline-block;
+      vertical-align: middle;
+      height: 32px;
+    }
+    .logo-area{
+      display: inline-block;
+      vertical-align: middle;
+      height: 32px;
+    }
+    h1 {
+      color: white;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 24px;
+      margin: 0 0 0 12px;
+      font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      // font-weight: 600;
+    }
+  }
+  
+  .sider {
+    min-height: 100vh;
+    box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
+    position: relative;
+    z-index: 10;
+    &.ligth {
+      background-color: white;
+      .logo {
+        background: white;
+        h1 {
+          color: #002140;
+        }
+      }
+    }
+  }
+  
+  .header{
+    height: 64px;
+    padding: 0 12px 0 0;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+    position: relative;
+  }
+  i.trigger {
+    font-size: 20px;
+    line-height: 64px;
+    cursor: pointer;
+    transition: all .3s, padding 0s;
+    padding: 0 24px;
+  }
+}
+
+
+// :global {
+//   .drawer .drawer-content {
+//     background: #001529;
+//   }
+//   .ant-menu-inline-collapsed {
+//     & > .ant-menu-item .sider-menu-item-img + span,
+//     & > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item .sider-menu-item-img + span,
+//     & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
+//       max-width: 0;
+//       display: inline-block;
+//       opacity: 0;
+//     }
+//   }
+//   .ant-menu-item .sider-menu-item-img + span,
+//   .ant-menu-submenu-title .sider-menu-item-img + span {
+//     transition: opacity .3s cubic-bezier(0.645, 0.045, 0.355, 1), width .3s cubic-bezier(0.645, 0.045, 0.355, 1);
+//     opacity: 1;
+//   }
+// }
