@@ -3,7 +3,7 @@ import { Layout, Menu, Icon, Popconfirm, Row, Col, Button } from 'igroot'
 import { Route, Router, Link } from 'react-router-dom'
 import createHashHistory from 'history/createHashHistory'
 import PropTypes from 'prop-types'
-import { logout, getLocalStorage } from '../function'
+import { logout, getLocalStorage, toggleFullScreen } from '../function'
 import './ContainerLayout.scss'
 
 const { SubMenu, Item } = Menu
@@ -31,6 +31,8 @@ export class ContainerLayout extends React.Component {
       const path = initialRoute.split('?')[0]
       let initialMenu = this.searchMenuByPath(menus, path)
       curMenuKey = initialMenu.key
+
+      localStorage.removeItem('currentRoute')
     } else {
       let currentMenu
       if (firstMenu.subs && firstMenu.subs.length > 0) {
@@ -61,7 +63,6 @@ export class ContainerLayout extends React.Component {
         <Layout style={{ height: '100%' }} id='page'>
           <Sider
             id="sider"
-            width={256}
             trigger={null}
             collapsible
             collapsed={collapsed}>
@@ -96,15 +97,16 @@ export class ContainerLayout extends React.Component {
                 height: '100%',
                 cursor: 'pointer',
                 marginRight: 15,
-                fontSize: 20
+                fontSize: 16
               }}>
+                <Button icon="arrows-alt" style={{ marginRight: 32 }} onClick={toggleFullScreen}>全屏</Button>
                 <span style={{ marginRight: 12 }}>{JSON.parse(localStorage.getItem('cname')) || '未登录'}</span>
                 <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
                   <Icon type='logout' style={{ display: localStorage.getItem('cname') ? 'inline-block' : 'none' }} />
                 </Popconfirm>
               </span>
             </Header>
-            <Content style={{ margin: '24px 24px 0', height: '100%' }}>
+            <Content style={{ margin: '12px 12px 0', height: '100%' }}>
               {this.props.children}
             </Content>
           </Layout>

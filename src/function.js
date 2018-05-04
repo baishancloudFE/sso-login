@@ -42,12 +42,7 @@ function getLocalStorage(key) {
 
   return JSON.parse(window.localStorage.getItem(key))
 }
-function urlToList(url) {
-  const urllist = url.split('/').filter(i => i);
-  return urllist.map((urlItem, index) => {
-    return `/${urllist.slice(0, index + 1).join('/')}`;
-  });
-}
+
 
 const logout = (domain) => {
   window.localStorage.clear()
@@ -58,4 +53,19 @@ const refreshUserInfo = (domain) => {
   window.location.assign(domain + '/account/user/login');
 }
 
-export { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage, urlToList, logout, refreshUserInfo }
+const toggleFullScreen = () => {
+  const doc = window.document;
+  const docEl = doc.documentElement;
+
+  const requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  const cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+  if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+    requestFullScreen.call(docEl);
+  }
+  else {
+    cancelFullScreen.call(doc);
+  }
+}
+
+export { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage, logout, refreshUserInfo, toggleFullScreen }
