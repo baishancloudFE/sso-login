@@ -22,8 +22,14 @@ export class ContainerLayout extends React.Component {
 
   componentWillMount() {
     const menus = getLocalStorage('menu')
-    //页面刚挂载时的菜单定位
     let firstMenu = menus[0]
+
+    const { location: { hash } } = window
+    const route = hash.replace('#', "")
+    if (!!route && route !== '/') {
+      firstMenu = this.searchMenuByPath(menus, route)
+    }
+    //页面刚挂载时的菜单定位
     let curMenuKey, curMenuPath
     const initialRoute = getLocalStorage('currentRoute')
     if (initialRoute) {
@@ -32,7 +38,7 @@ export class ContainerLayout extends React.Component {
       let initialMenu = this.searchMenuByPath(menus, path)
       curMenuKey = initialMenu.key
 
-      localStorage.removeItem('currentRoute')
+      // localStorage.removeItem('currentRoute')
     } else {
       let currentMenu
       if (firstMenu.subs && firstMenu.subs.length > 0) {
