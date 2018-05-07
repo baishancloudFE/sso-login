@@ -22,18 +22,12 @@ export class ContainerLayout extends React.Component {
 
   componentWillMount() {
     const menus = getLocalStorage('menu')
+
     let route   // 初始得到的路由信息
+    const { location: { hash } } = window
+    route = hash.replace('#', "")
+
     let urlPath // 最终要放进浏览器的路由地址
-
-    const initialRoute = getLocalStorage('currentRoute')
-    if (initialRoute) {// token重新获取后在此进入页面，localStorage中保存有一个之前的路由
-      route = initialRoute
-      localStorage.removeItem('currentRoute')
-    } else {
-      const { location: { hash } } = window
-      route = hash.replace('#', "")
-    }
-
     let selectedKey, openKey
     // 默认路径如果为／，则设置第一个叶子菜单为默认路由
     if (!route || route === '/') {
