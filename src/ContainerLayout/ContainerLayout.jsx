@@ -15,55 +15,57 @@ export class ContainerLayout extends React.Component {
     super(props)
     this.state = {
       selectedKeys: [],
-      defaultOpenKeys: [],
+      openKeys: [],
       collapsed: false,
     }
   }
 
   componentWillMount() {
     const menus = getLocalStorage('menu')
-    let firstMenu = menus[0]
+    let route   // 初始得到的路由信息
+    let urlPath // 最终要放进浏览器的路由地址
 
-    const { location: { hash } } = window
-    const route = hash.replace('#', "")
-    if (!!route && route !== '/') {
-      firstMenu = this.searchMenuByPath(menus, route)
-    }
-    //页面刚挂载时的菜单定位
-    let curMenuKey, curMenuPath
     const initialRoute = getLocalStorage('currentRoute')
-    if (initialRoute) {
-      curMenuPath = initialRoute
-      const path = initialRoute.split('?')[0]
-      let initialMenu = this.searchMenuByPath(menus, path)
-      curMenuKey = initialMenu.key
-
-      // localStorage.removeItem('currentRoute')
+    if (initialRoute) {// token重新获取后在此进入页面，localStorage中保存有一个之前的路由
+      route = initialRoute
+      localStorage.removeItem('currentRoute')
     } else {
-      let currentMenu
-      if (firstMenu.subs && firstMenu.subs.length > 0) {
-        currentMenu = firstMenu.subs[0]
-      } else {
-        currentMenu = firstMenu
-      }
-      curMenuKey = currentMenu.key
-      curMenuPath = currentMenu.to
+      const { location: { hash } } = window
+      route = hash.replace('#', "")
     }
 
-    hashHistory.push(curMenuPath)
+    let selectedKey, openKey
+    // 默认路径如果为／，则设置第一个叶子菜单为默认路由
+    if (!route || route === '/') {
+      const firstChildMenu = this.getFlatMenus(menus[0])[0]
+      openKey = menus[0].key
+      selectedKey = firstChildMenu ? firstChildMenu.key : openKey
+      urlPath = firstChildMenu ? firstChildMenu.to : open
+    } else {// 用户手动输入一个路由
+      urlPath = route
+      let menu = this.searchMenuByPath(menus, route)
+      if (!!menu) {
+        const parentMenu = this.searchParentMenu(menu, menus)
+        selectedKey = menu.key
+        openKey = parentMenu ? parentMenu.key : selectedKey
+      }// 如果不存在说明用户输入的路径有误，或者没有权限，则进入平台自定义的404路由
+    }
+
+    window.location.hash = urlPath
+
     this.setState({
-      selectedKeys: [curMenuKey],
-      defaultOpenKeys: [firstMenu.key]
+      openKeys: [openKey],
+      selectedKeys: [selectedKey]
     })
-    //end
+
     this.historyListen(menus)
   }
 
   render() {
-    const { selectedKeys, collapsed, defaultOpenKeys } = this.state
+    const { selectedKeys, collapsed, openKeys } = this.state
     const { apiDomain, logo, appName } = this.props
     const menus = getLocalStorage('menu')
-
+    console.log('openKeys', openKeys, 'selectedKeys', selectedKeys)
     return (
       <Router history={hashHistory}>
         <Layout style={{ height: '100%' }} id='page'>
@@ -81,7 +83,8 @@ export class ContainerLayout extends React.Component {
             <Menu
               theme='dark'
               mode='inline'
-              defaultOpenKeys={defaultOpenKeys}
+              openKeys={openKeys}
+              onOpenChange={this.handleOpenChange}
               selectedKeys={selectedKeys}
               style={{ padding: '16px 0', width: '100%' }}
             >
@@ -121,13 +124,23 @@ export class ContainerLayout extends React.Component {
     )
   }
 
+  // 处理父级菜单展开
+  handleOpenChange = (openKeys) => {
+    this.setState({
+      openKeys: [openKeys[openKeys.length - 1]]
+    })
+  }
+
   // 监听浏览器地址栏变化，并联动菜单的选中状态
   historyListen = (menus) => {
     hashHistory.listen((location) => {
       let currentMenu = this.searchMenuByPath(menus, location.pathname)
-      if (currentMenu.key !== this.state.selectedKeys[0]) {
+      let parentMenu = this.searchParentMenu(currentMenu, menus)
+
+      if (!!currentMenu && !!parentMenu && currentMenu.key !== this.state.selectedKeys[0]) {
         this.setState({
-          selectedKeys: [currentMenu.key]
+          selectedKeys: [currentMenu.key],
+          openKeys: [parentMenu.key]
         })
       }
     })
@@ -175,6 +188,31 @@ export class ContainerLayout extends React.Component {
     this.setState({
       collapsed,
     })
+  }
+
+  // 将所有菜单平铺
+  getFlatMenus = (menu) => {
+    let res = []
+    if (!!menu.subs && menu.subs.length > 0) {
+      menu.subs.forEach(sub => {
+        res = [...res, ...this.getFlatMenus(sub)]
+      })
+    } else {
+      res.push(menu)
+    }
+    return res
+  }
+
+  // 获取某个菜单的最上级菜单
+  searchParentMenu = (menu, menus) => {
+    let res = []
+    menus.forEach(item => {
+      const childMenus = this.getFlatMenus(item)
+      if (childMenus.some(child => child.to === menu.to)) {
+        res.push(item)
+      }
+    })
+    return res[0]
   }
 
   // 根据路径名过滤出菜单

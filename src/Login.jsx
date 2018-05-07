@@ -57,7 +57,8 @@ class Authorized extends Component {
 
   static onTokenInvalid(domain, location) {
     window.localStorage.clear()
-    setLocalStorage('currentRoute', location.hash.replace('#', ''))// token失效时记录当前页面路由
+    setLocalStorage('currentRoute', location.hash.replace('#', '')) // token失效时记录当前页面路由
+    setLocalStorage('currentUrl', location.hash)                    // token失效时记录当前页面的浏览器路径
     window.location.assign(domain + '/account/user/login')
   }
 
@@ -122,6 +123,7 @@ class Authorized extends Component {
 
     window.localStorage.clear()
     setLocalStorage('currentRoute', window.location.hash.replace('#', ''))// token失效时记录当前页面路由
+    setLocalStorage('currentUrl', location.hash)                          // token失效时记录当前页面的浏览器路径
     location.assign(apiDomain + serverLogin)
 
   }
