@@ -27,29 +27,26 @@ export class ContainerLayout extends React.Component {
     const { location: { hash } } = window
     route = hash.replace('#', "")
 
-    let urlPath // 最终要放进浏览器的路由地址
-    let selectedKey, openKey
+    let selectedMenu, openKey
     // 默认路径如果为／，则设置第一个叶子菜单为默认路由
     if (!route || route === '/') {
       const firstChildMenu = this.getFlatMenus(menus[0])[0]
       openKey = menus[0].key
-      selectedKey = firstChildMenu ? firstChildMenu.key : openKey
-      urlPath = firstChildMenu ? firstChildMenu.to : open
+      selectedMenu = firstChildMenu
     } else {// 用户手动输入一个路由
-      urlPath = route
       let menu = this.searchMenuByPath(menus, route)
       if (!!menu) {
         const parentMenu = this.searchParentMenu(menu, menus)
-        selectedKey = menu.key
+        selectedMenu = menu
         openKey = parentMenu ? parentMenu.key : selectedKey
       }// 如果不存在说明用户输入的路径有误，或者没有权限，则进入平台自定义的404路由
     }
 
-    window.location.hash = urlPath
-
+    window.location.hash = selectedMenu.to
+    document.title = selectedMenu.name
     this.setState({
       openKeys: [openKey],
-      selectedKeys: [selectedKey]
+      selectedKeys: [selectedMenu.key]
     })
 
     this.historyListen(menus)
@@ -130,8 +127,9 @@ export class ContainerLayout extends React.Component {
     hashHistory.listen((location) => {
       let currentMenu = this.searchMenuByPath(menus, location.pathname)
       let parentMenu = this.searchParentMenu(currentMenu, menus)
-
+      document.title = currentMenu.name
       if (!!currentMenu && !!parentMenu && currentMenu.key !== this.state.selectedKeys[0]) {
+
         this.setState({
           selectedKeys: [currentMenu.key],
           openKeys: [parentMenu.key]
@@ -227,7 +225,7 @@ export class ContainerLayout extends React.Component {
 }
 
 ContainerLayout.propTypes = {
-  apiDomain: PropTypes.string.isRequired,              // 接口请求地址,用于登出操作
+  apiDomain: PropTypes.string.isRequired,           // 接口请求地址,用于登出操作
   logo: PropTypes.string,                           // logo路径
   appName: PropTypes.string.isRequired,             // 平台名称
 }
