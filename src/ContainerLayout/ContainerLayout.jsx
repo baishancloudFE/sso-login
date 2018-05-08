@@ -21,20 +21,28 @@ export class ContainerLayout extends React.Component {
   }
 
   componentWillMount() {
+    console.log('componentWillMount')
     const menus = getLocalStorage('menu')
+    this.historyListen(menus)
 
     let route   // 初始得到的路由信息
     const { location: { hash } } = window
     route = hash.replace('#', "")
 
+    console.log('初始route', route)
+
+
     let selectedMenu, openKey
     // 默认路径如果为／，则设置第一个叶子菜单为默认路由
     if (!route || route === '/') {
+
       const firstChildMenu = this.getFlatMenus(menus[0])[0]
+      console.log('初始route为空，找到的menu是', firstChildMenu)
       openKey = menus[0].key
       selectedMenu = firstChildMenu
     } else {// 用户手动输入一个路由
       let menu = this.searchMenuByPath(menus, route)
+      console.log('初始route不为空，找到的menu是', menu)
       if (!!menu) {
         const parentMenu = this.searchParentMenu(menu, menus)
         selectedMenu = menu
@@ -42,14 +50,19 @@ export class ContainerLayout extends React.Component {
       }// 如果不存在说明用户输入的路径有误，或者没有权限，则进入平台自定义的404路由
     }
 
-    window.location.hash = selectedMenu.to
+    // window.location.hash = selectedMenu.to
+    if (selectedMenu.to !== route) {
+      hashHistory.push(selectedMenu.to)
+    }
+    console.log(hashHistory)
+
     document.title = selectedMenu.name
     this.setState({
       openKeys: [openKey],
       selectedKeys: [selectedMenu.key]
     })
 
-    this.historyListen(menus)
+
   }
 
   render() {
@@ -125,16 +138,25 @@ export class ContainerLayout extends React.Component {
   // 监听浏览器地址栏变化，并联动菜单的选中状态
   historyListen = (menus) => {
     hashHistory.listen((location) => {
-      let currentMenu = this.searchMenuByPath(menus, location.pathname)
-      let parentMenu = this.searchParentMenu(currentMenu, menus)
-      document.title = currentMenu.name
-      if (!!currentMenu && !!parentMenu && currentMenu.key !== this.state.selectedKeys[0]) {
+      console.log('hashHistory.listen', location.pathname)
+      if (location.pathname !== '/') {
+        let currentMenu = this.searchMenuByPath(menus, location.pathname)
+        console.log('currentMenu', currentMenu)
+        if (!!currentMenu) {
+          let parentMenu = this.searchParentMenu(currentMenu, menus)
+          console.log('parentMenu', parentMenu)
+          document.title = currentMenu.name
+          console.log(!!currentMenu && !!parentMenu && currentMenu.key !== this.state.selectedKeys[0])
+          if (!!parentMenu && currentMenu.key !== this.state.selectedKeys[0]) {
 
-        this.setState({
-          selectedKeys: [currentMenu.key],
-          openKeys: [parentMenu.key]
-        })
+            this.setState({
+              selectedKeys: [currentMenu.key],
+              openKeys: [parentMenu.key]
+            })
+          }
+        }
       }
+
     })
   }
 

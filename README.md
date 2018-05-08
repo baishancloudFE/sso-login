@@ -1,6 +1,7 @@
 # SSO-login 组件
 > 前端对接 SSO 的通用组件
 
+
 ### 使用
 
 下载 npm 包
@@ -113,3 +114,7 @@ import Login from 'sso-login'
   <Button>xx操作</Button>
 </Login.CheckPermission>
 ```
+
+### 更新日志
+
+[更新日志](./CHANGELOG.md "更新日志")
