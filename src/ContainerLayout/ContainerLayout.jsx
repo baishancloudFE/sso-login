@@ -7,7 +7,7 @@ import { logout, getLocalStorage, toggleFullScreen } from '../function'
 import './ContainerLayout.scss'
 
 const { SubMenu, Item } = Menu
-const { Header, Content, Sider } = Layout
+const { Header, Content, Sider, Footer } = Layout
 const hashHistory = createHashHistory()
 
 export class ContainerLayout extends React.Component {
@@ -122,6 +122,9 @@ export class ContainerLayout extends React.Component {
             <Content style={{ margin: '12px 12px 0', height: '100%' }}>
               {this.props.children}
             </Content>
+            <Footer style={{ textAlign: 'center' }}>
+              Copyright © 2018 白山云科技
+            </Footer>
           </Layout>
         </Layout>
       </Router >
