@@ -6,7 +6,7 @@ body{
   width: 100%;
   height: 100%;
 }
-#loading-wrapper {
+#sso-loading-wrapper {
   position: fixed;
   width: 100%;
   height: 100%;
@@ -15,7 +15,7 @@ body{
   background-color: #222;
 }
 
-#loading-text {
+#sso-loading-text {
   display: block;
   position: absolute;
   top: 50%;
@@ -29,7 +29,7 @@ body{
   font-size: 20px;
 }
 
-#loading-content {
+#sso-loading-content {
   display: block;
   position: relative;
   left: 50%;
@@ -40,7 +40,7 @@ body{
   border: 3px solid #F00;
 }
 
-#loading-content:after {
+#sso-loading-content:after {
   content: "";
   position: absolute;
   border: 3px solid #0F0;
@@ -50,7 +50,7 @@ body{
   bottom: 15px;
 }
 
-#loading-content:before {
+#sso-loading-content:before {
   content: "";
   position: absolute;
   border: 3px solid #00F;
@@ -60,7 +60,7 @@ body{
   bottom: 5px;
 }
 
-#loading-content {
+#sso-loading-content {
   border: 3px solid transparent;
   border-top-color: #4D658D;
   border-bottom-color: #4D658D;
@@ -71,7 +71,7 @@ body{
   animation: loader 2s linear infinite;
 }
 
-#loading-content:before {
+#sso-loading-content:before {
   border: 3px solid transparent;
   border-top-color: #D4CC6A;
   border-bottom-color: #D4CC6A;
@@ -82,7 +82,7 @@ body{
   animation: loader 3s linear infinite;
 }
 
-#loading-content:after {
+#sso-loading-content:after {
   border: 3px solid transparent;
   border-top-color: #84417C;
   border-bottom-color: #84417C;
@@ -119,29 +119,29 @@ body{
   }
 }
 
-#content-wrapper {
-  color: #FFF;
-  position: fixed;
-  left: 0;
-  top: 20px;
-  width: 100%;
-  height: 100%;
-}
+// #content-wrapper {
+//   color: #FFF;
+//   position: fixed;
+//   left: 0;
+//   top: 20px;
+//   width: 100%;
+//   height: 100%;
+// }
 
-#header
-{
-  width: 800px;
-  margin: 0 auto;
-  text-align: center;
-  height: 100px;
-  background-color: #666;
-}
+// #header
+// {
+//   width: 800px;
+//   margin: 0 auto;
+//   text-align: center;
+//   height: 100px;
+//   background-color: #666;
+// }
 
-#content
-{
-  width: 800px;
-  height: 1000px;
-  margin: 0 auto;
-  text-align: center;
-  background-color: #888;
-}
+// #content
+// {
+//   width: 800px;
+//   height: 1000px;
+//   margin: 0 auto;
+//   text-align: center;
+//   background-color: #888;
+// }

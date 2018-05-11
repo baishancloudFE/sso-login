@@ -17,9 +17,9 @@ export default () => {
       apiDomain={'http://test-pps.i.trpcdn.net'}
       needDefaultAnimation={false}
       animation={(
-        <div id="loading-wrapper">
-          <div id="loading-text">LOADING</div>
-          <div id="loading-content"></div>
+        <div id="sso-loading-wrapper">
+          <div id="sso-loading-text">LOADING</div>
+          <div id="sso-loading-content"></div>
         </div>
       )}
       onLogin={callbacks}>

@@ -77,9 +77,9 @@ class Authorized extends Component {
     const { isLogin } = this.state
     const { className, style, needDefaultAnimation, animation } = this.props
     const defaultAnimation = (
-      <div id="loading-wrapper">
-        <div id="loading-text">LOADING</div>
-        <div id="loading-content"></div>
+      <div id="sso-loading-wrapper">
+        <div id="sso-loading-text">LOADING</div>
+        <div id="sso-loading-content"></div>
       </div>
     )
 
