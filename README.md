@@ -77,6 +77,8 @@ onTokenInvalid(apiDomain)
 | apiDomain   | 必填     | 接口请求地址      |   string    | -
 | logo | 非必填| logo地址      |   string    | -
 | appName    | 必填|   平台名称     |   string    | -
+|mode|非必填|菜单模式：有sider+header、sider和header三种可以选择|   string    | sider+header
+|needFooter|非必填|是否需要页脚|   boolean    | true
 
 在代码中使用
 ```jsx

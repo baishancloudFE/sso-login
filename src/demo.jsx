@@ -11,10 +11,13 @@ const callbacks = [{
   }
 }]
 
+// const domain = "http://test-roster.i.trpcdn.net"
+const domain = "http://test-pps.i.trpcdn.net"
+
 export default () => {
   return (
     <Login
-      apiDomain={'http://test-pps.i.trpcdn.net'}
+      apiDomain={domain}
       needDefaultAnimation={false}
       animation={(
         <div id="sso-loading-wrapper">
@@ -24,13 +27,16 @@ export default () => {
       )}
       onLogin={callbacks}>
       <Login.ContainerLayout
-        apiDomain='http://test-pps.i.trpcdn.net'
+        apiDomain={domain}
         logo="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
         appName="SSO登录测试"
+        mode="header"
       >
-        <Login.CheckPermission apiName="customer">
-          <Button type="primary" size="large">测试接口权限控制</Button>
-        </Login.CheckPermission>
+        <div style={{ height: 1200, width: '100%' }}>
+          <Login.CheckPermission apiName="customer">
+            <Button type="primary" size="large">测试接口权限控制</Button>
+          </Login.CheckPermission>
+        </div>
       </Login.ContainerLayout>
     </Login >
   )

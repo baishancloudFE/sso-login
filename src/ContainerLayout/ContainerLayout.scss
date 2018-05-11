@@ -1,5 +1,5 @@
 
-#page{
+#container-page{
   .logo {
     height: 64px;
     position: relative;
@@ -26,6 +26,28 @@
       margin: 0 0 0 12px;
       font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
       // font-weight: 600;
+    }
+  }
+
+  .sider-user-area{
+    height: 64px;
+    position: relative;
+    line-height: 64px;
+    padding-left: (80px - 32px) / 2;
+    transition: all 0.3s;
+    background: #001529;
+    overflow: hidden;
+    .sider-avatar {
+      display: inline-block;
+      vertical-align: middle;
+      height: 32px;
+    }
+    .sider-user-name{
+      color:#fff;
+      display: inline-block;
+      vertical-align: middle;
+      font-weight: 18px;
+      height: 64px;
     }
   }
   
@@ -61,23 +83,40 @@
   }
 }
 
-
-// :global {
-//   .drawer .drawer-content {
-//     background: #001529;
-//   }
-//   .ant-menu-inline-collapsed {
-//     & > .ant-menu-item .sider-menu-item-img + span,
-//     & > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item .sider-menu-item-img + span,
-//     & > .ant-menu-submenu > .ant-menu-submenu-title .sider-menu-item-img + span {
-//       max-width: 0;
-//       display: inline-block;
-//       opacity: 0;
-//     }
-//   }
-//   .ant-menu-item .sider-menu-item-img + span,
-//   .ant-menu-submenu-title .sider-menu-item-img + span {
-//     transition: opacity .3s cubic-bezier(0.645, 0.045, 0.355, 1), width .3s cubic-bezier(0.645, 0.045, 0.355, 1);
-//     opacity: 1;
-//   }
-// }
+#header-page{
+  .ant-layout-header {
+    padding-left: 12px;
+  }
+  
+  .ant-menu-dark.ant-menu-horizontal {
+    height: 64px;
+    line-height: 64px;
+  }
+  .logo {
+    height: 64px;
+    position: relative;
+    line-height: 64px;
+    float: left;
+    margin-right: 22px;
+    
+    img {
+      display: inline-block;
+      vertical-align: middle;
+      height: 32px;
+    }
+    .logo-area{
+      display: inline-block;
+      vertical-align: middle;
+      height: 32px;
+    }
+    h1 {
+      color: white;
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 20px;
+      margin: 0 0 0 12px;
+      font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      // font-weight: 600;
+    }
+  }
+}

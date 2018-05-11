@@ -1,9 +1,9 @@
 import React from 'react'
-import { Layout, Menu, Icon, Popconfirm, Row, Col, Button } from 'igroot'
+import { Layout, Menu, Icon, Popconfirm, Row, Col, Button, Avatar } from 'igroot'
 import { Route, Router, Link } from 'react-router-dom'
 import createHashHistory from 'history/createHashHistory'
 import PropTypes from 'prop-types'
-import { logout, getLocalStorage, toggleFullScreen } from '../function'
+import { logout, getLocalStorage, toggleFullScreen, setLocalStorage } from '../function'
 import './ContainerLayout.scss'
 
 const { SubMenu, Item } = Menu
@@ -67,66 +67,162 @@ export class ContainerLayout extends React.Component {
 
   render() {
     const { selectedKeys, collapsed, openKeys } = this.state
-    const { apiDomain, logo, appName } = this.props
+    const { apiDomain, logo, appName, mode, needFooter } = this.props
     const menus = getLocalStorage('menu')
     console.log('openKeys', openKeys, 'selectedKeys', selectedKeys)
+
+    const siderHeaderContainer = (
+      <Layout style={{ height: '100%' }} id='container-page'>
+        <Sider
+          id="sider"
+          trigger={null}
+          collapsible
+          collapsed={collapsed}>
+          <div className="logo" key="logo">
+            {
+              logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
+            }
+            <h1>{appName}</h1>
+          </div>
+          <Menu
+            theme='dark'
+            mode='inline'
+            openKeys={openKeys}
+            onOpenChange={this.handleOpenChange}
+            selectedKeys={selectedKeys}
+            style={{ width: '100%' }}
+          >
+            {
+              this.renderMenu(menus)
+            }
+          </Menu>
+        </Sider>
+        <Layout>
+          <Header className='header'>
+            <Icon
+              className="trigger"
+              type={collapsed ? 'menu-unfold' : 'menu-fold'}
+              onClick={this.onCollapse}
+            />
+            <span style={{
+              display: 'inline-block',
+              float: 'right',
+              height: '100%',
+              cursor: 'pointer',
+              marginRight: 15,
+              fontSize: 16
+            }}>
+              <Button icon="arrows-alt" style={{ marginRight: 32 }} onClick={toggleFullScreen}>全屏</Button>
+              <span style={{ marginRight: 12 }}>{JSON.parse(localStorage.getItem('cname')) || '未登录'}</span>
+              <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
+                <Icon type='logout' style={{ display: localStorage.getItem('cname') ? 'inline-block' : 'none' }} />
+              </Popconfirm>
+            </span>
+          </Header>
+          <Content style={{ margin: '12px 12px 0', height: '100%' }}>
+            {this.props.children}
+          </Content>
+          {
+            needFooter ? <Footer style={{ textAlign: 'center' }}> Copyright © 2018 白山云科技</Footer> : null
+          }
+        </Layout>
+      </Layout>
+    )
+    const siderContainer = (
+      <Layout style={{ height: '100%' }} id='container-page'>
+        <Sider
+          id="sider"
+          collapsible
+          collapsed={collapsed}
+          onCollapse={this.onCollapse}>
+          <div className="logo" key="logo">
+            {
+              logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
+            }
+            <h1>{appName}</h1>
+          </div>
+          <div className="sider-user-area">
+            <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
+              <Avatar className="sider-avatar" shape="square" icon="user" style={{ marginRight: 12 }} />
+            </Popconfirm>
+            <span className="sider-user-name">
+              <span style={{ marginRight: 12 }}>{JSON.parse(localStorage.getItem('cname')) || '未登录'}</span>
+              <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
+                <Icon type='logout' style={{ display: localStorage.getItem('cname') ? 'inline-block' : 'none' }} />
+              </Popconfirm>
+            </span>
+          </div>
+          <Menu
+            theme='dark'
+            mode='inline'
+            openKeys={openKeys}
+            onOpenChange={this.handleOpenChange}
+            selectedKeys={selectedKeys}
+            style={{ width: '100%' }}
+          >
+            {
+              this.renderMenu(menus)
+            }
+          </Menu>
+        </Sider>
+        <Layout>
+          <Content style={{ margin: '12px 12px 0', height: '100%' }}>
+            {this.props.children}
+          </Content>
+          {
+            needFooter ? <Footer style={{ textAlign: 'center' }}> Copyright © 2018 白山云科技</Footer> : null
+          }
+        </Layout>
+      </Layout>
+    )
+    const headerContainer = (
+      <Layout style={{ height: '100%' }} id='header-page'>
+        <Header>
+          <span className="logo" key="logo">
+            {
+              logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
+            }
+            <h1>{appName}</h1>
+          </span>
+          <Menu
+            theme='dark'
+            mode='horizontal'
+            style={{ display: 'inline-block' }}
+            onOpenChange={this.handleOpenChange}
+            selectedKeys={selectedKeys}
+          >
+            {
+              this.renderMenu(menus)
+            }
+          </Menu>
+          <span style={{
+            display: 'inline-block',
+            float: 'right',
+            height: '100%',
+            cursor: 'pointer',
+            fontSize: 16,
+            color: '#fff'
+          }}>
+            <span style={{ marginRight: 12 }}>{JSON.parse(localStorage.getItem('cname')) || '未登录'}</span>
+            <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
+              <Icon type='logout' style={{ display: localStorage.getItem('cname') ? 'inline-block' : 'none' }} />
+            </Popconfirm>
+          </span>
+        </Header>
+        <Content style={{ margin: '12px 12px 0', height: '100%' }}>
+          {this.props.children}
+        </Content>
+        {
+          needFooter ? <Footer style={{ textAlign: 'center' }}> Copyright © 2018 白山云科技</Footer> : null
+        }
+      </Layout >
+    )
     return (
       <Router history={hashHistory}>
-        <Layout style={{ height: '100%' }} id='page'>
-          <Sider
-            id="sider"
-            trigger={null}
-            collapsible
-            collapsed={collapsed}>
-            <div className="logo" key="logo">
-              {
-                logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
-              }
-              <h1>{appName}</h1>
-            </div>
-            <Menu
-              theme='dark'
-              mode='inline'
-              openKeys={openKeys}
-              onOpenChange={this.handleOpenChange}
-              selectedKeys={selectedKeys}
-              style={{ padding: '16px 0', width: '100%' }}
-            >
-              {
-                this.renderMenu(menus)
-              }
-            </Menu>
-          </Sider>
-          <Layout>
-            <Header className='header'>
-              <Icon
-                className="trigger"
-                type={collapsed ? 'menu-unfold' : 'menu-fold'}
-                onClick={this.onCollapse}
-              />
-              <span style={{
-                display: 'inline-block',
-                float: 'right',
-                height: '100%',
-                cursor: 'pointer',
-                marginRight: 15,
-                fontSize: 16
-              }}>
-                <Button icon="arrows-alt" style={{ marginRight: 32 }} onClick={toggleFullScreen}>全屏</Button>
-                <span style={{ marginRight: 12 }}>{JSON.parse(localStorage.getItem('cname')) || '未登录'}</span>
-                <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
-                  <Icon type='logout' style={{ display: localStorage.getItem('cname') ? 'inline-block' : 'none' }} />
-                </Popconfirm>
-              </span>
-            </Header>
-            <Content style={{ margin: '12px 12px 0', height: '100%' }}>
-              {this.props.children}
-            </Content>
-            <Footer style={{ textAlign: 'center' }}>
-              Copyright © 2018 白山云科技
-            </Footer>
-          </Layout>
-        </Layout>
+        {
+          mode === 'sider+header' ? siderHeaderContainer
+            : (mode === 'sider' ? siderContainer : headerContainer)
+        }
       </Router >
     )
   }
@@ -202,8 +298,20 @@ export class ContainerLayout extends React.Component {
 
   onCollapse = () => {
     const collapsed = !this.state.collapsed
+
+    let curOpenKey      // 收缩后的 openKey 应该是空的
+    let storageOpenKey  // 保存收缩前的 openKey
+    if (collapsed) {
+      curOpenKey = ""
+      storageOpenKey = this.state.openKeys[0]
+    } else {
+      curOpenKey = getLocalStorage('openKey')
+      storageOpenKey = ""
+    }
+    setLocalStorage('openKey', storageOpenKey)
     this.setState({
       collapsed,
+      openKeys: [curOpenKey]
     })
   }
 
@@ -253,4 +361,10 @@ ContainerLayout.propTypes = {
   apiDomain: PropTypes.string.isRequired,           // 接口请求地址,用于登出操作
   logo: PropTypes.string,                           // logo路径
   appName: PropTypes.string.isRequired,             // 平台名称
+  mode: PropTypes.string,                           // 菜单模式：sider+header;sider;header
+  needFooter: PropTypes.bool,                       // 是否需要页脚
+}
+ContainerLayout.defaultProps = {
+  mode: 'sider+header',
+  needFooter: true
 }
