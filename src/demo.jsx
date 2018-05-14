@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Icon } from 'igroot'
+import { Route, Router, Link, Switch, Redirect } from 'react-router-dom'
 import Login from './Login'
 import './Login.scss'
 import { getLocalStorage } from './function'
@@ -30,12 +31,17 @@ export default () => {
         apiDomain={domain}
         logo="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
         appName="SSO登录测试"
-        mode="header"
       >
         <div style={{ height: 1200, width: '100%' }}>
-          <Login.CheckPermission apiName="customer">
-            <Button type="primary" size="large">测试接口权限控制</Button>
-          </Login.CheckPermission>
+          <Switch>
+            {
+              (JSON.parse(localStorage.getItem('menu')) || []).map(menu => (
+                <Route exact path={menu.to} render={() => <h1>{menu.name}</h1>} />
+              ))
+            }
+            <Route exact path='/403' render={() => <h1>/403</h1>} />
+            <Redirect exact to='/403' path='/' />
+          </Switch>
         </div>
       </Login.ContainerLayout>
     </Login >

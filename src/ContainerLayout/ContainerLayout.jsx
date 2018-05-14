@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layout, Menu, Icon, Popconfirm, Row, Col, Button, Avatar } from 'igroot'
-import { Route, Router, Link } from 'react-router-dom'
+import { Router, Link } from 'react-router-dom'
 import createHashHistory from 'history/createHashHistory'
 import PropTypes from 'prop-types'
 import { logout, getLocalStorage, toggleFullScreen, setLocalStorage } from '../function'
@@ -24,6 +24,12 @@ export class ContainerLayout extends React.Component {
     console.log('componentWillMount')
     const menus = getLocalStorage('menu')
     this.historyListen(menus)
+
+    const initialRoute = getLocalStorage('currentRoute')
+    if (initialRoute) {
+      hashHistory.push(initialRoute)
+      localStorage.removeItem('currentRoute')
+    }
 
     let route   // 初始得到的路由信息
     const { location: { hash } } = window

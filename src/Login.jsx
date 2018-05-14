@@ -55,20 +55,21 @@ class Authorized extends Component {
     window.location.assign(domain + '/account/user/logout')
   }
 
-  static onTokenInvalid(domain, location) {
+  static onTokenInvalid(domain) {
     window.localStorage.clear()
-    setLocalStorage('currentRoute', location.hash.replace('#', '')) // token失效时记录当前页面路由
-    setLocalStorage('currentUrl', location.href)                    // token失效时记录当前页面的浏览器路径
+    setLocalStorage('currentRoute', window.location.hash.replace('#', '')) // token失效时记录当前页面路由
+    setLocalStorage('currentUrl', window.location.href)                    // token失效时记录当前页面的浏览器路径
     window.location.assign(domain + '/account/user/login')
   }
 
   componentWillMount() {
     this.login().then((isTokenValidate) => {
-      const initialRoute = getLocalStorage('currentRoute')
-      if (initialRoute) {
-        window.location.hash = initialRoute
-        localStorage.removeItem('currentRoute')
-      }
+      // const initialRoute = getLocalStorage('currentRoute')
+      // if (initialRoute) {
+      //   // 给浏览器的 hash 地址赋值并不会导致页面刷新，所以要重写 href
+      //   window.location.href = '/#' + initialRoute
+      //   localStorage.removeItem('currentRoute')
+      // }
       this.setState({ isLogin: isTokenValidate })
     })
   }
