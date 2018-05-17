@@ -29,8 +29,9 @@ export default () => {
       onLogin={callbacks}>
       <Login.ContainerLayout
         apiDomain={domain}
-        logo="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
-        appName="SSO登录测试"
+        // logo="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png"
+        appName="PPS"
+        mode="sider+header"
       >
         <div style={{ height: 1200, width: '100%' }}>
           <Switch>

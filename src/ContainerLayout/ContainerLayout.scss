@@ -13,11 +13,6 @@
       vertical-align: middle;
       height: 32px;
     }
-    .logo-area{
-      display: inline-block;
-      vertical-align: middle;
-      height: 32px;
-    }
     h1 {
       color: white;
       display: inline-block;
@@ -27,6 +22,27 @@
       font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
       // font-weight: 600;
     }
+  }
+
+  .logo-only-name{
+    height: 64px;
+    position: relative;
+    line-height: 64px;
+    transition: all 0.3s;
+    background: #002140;
+    overflow: hidden;
+    text-align: center;
+    .app-name{
+      margin: 10px;
+      background-color: #3f4142;
+      text-align: center;
+      height: 40px;
+      line-height: 40px;
+      border-radius: 5px;
+      color: white;
+      font-size: 18px;
+    }
+    
   }
 
   .sider-user-area{
@@ -104,11 +120,6 @@
       vertical-align: middle;
       height: 32px;
     }
-    .logo-area{
-      display: inline-block;
-      vertical-align: middle;
-      height: 32px;
-    }
     h1 {
       color: white;
       display: inline-block;
@@ -118,5 +129,26 @@
       font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
       // font-weight: 600;
     }
+  }
+  .logo-only-name{
+    height: 64px;
+    width:200px;
+    padding: 2px;
+    position: relative;
+    line-height: 64px;
+    float: left;
+    
+    .app-name{
+      background: #2a2b2b;
+      text-align: center;
+      height: 40px;
+      width:180px;
+      display: inline-block;
+      line-height: 40px;
+      border-radius: 5px;
+      color: white;
+      font-size: 20px;
+    }
+    
   }
 }

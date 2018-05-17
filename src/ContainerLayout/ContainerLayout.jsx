@@ -84,12 +84,18 @@ export class ContainerLayout extends React.Component {
           trigger={null}
           collapsible
           collapsed={collapsed}>
-          <div className="logo" key="logo">
-            {
-              logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
-            }
-            <h1>{appName}</h1>
-          </div>
+          {
+            logo ? (
+              <div className="logo">
+                <img src={logo} alt="logo" />
+                <h1>{appName}</h1>
+              </div>
+            ) : (
+                <div className="logo-only-name">
+                  <div className="app-name">{appName}</div>
+                </div>
+              )
+          }
           <Menu
             theme='dark'
             mode='inline'
@@ -141,12 +147,18 @@ export class ContainerLayout extends React.Component {
           collapsible
           collapsed={collapsed}
           onCollapse={this.onCollapse}>
-          <div className="logo" key="logo">
-            {
-              logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
-            }
-            <h1>{appName}</h1>
-          </div>
+          {
+            logo ? (
+              <div className="logo">
+                <img src={logo} alt="logo" />
+                <h1>{appName}</h1>
+              </div>
+            ) : (
+                <div className="logo-only-name">
+                  <div className="app-name">{appName}</div>
+                </div>
+              )
+          }
           <div className="sider-user-area">
             <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>
               <Avatar className="sider-avatar" shape="square" icon="user" style={{ marginRight: 12 }} />
@@ -184,12 +196,18 @@ export class ContainerLayout extends React.Component {
     const headerContainer = (
       <Layout style={{ height: '100%' }} id='header-page'>
         <Header>
-          <span className="logo" key="logo">
-            {
-              logo ? <img src={logo} alt="logo" /> : <span className="logo-area" />
-            }
-            <h1>{appName}</h1>
-          </span>
+          {
+            logo ? (
+              <span className="logo">
+                <img src={logo} alt="logo" />
+                <h1>{appName}</h1>
+              </span>
+            ) : (
+                <span className="logo-only-name">
+                  <span className="app-name">{appName}</span>
+                </span>
+              )
+          }
           <Menu
             theme='dark'
             mode='horizontal'
