@@ -227,7 +227,7 @@ class Authorized extends Component {
   }
   logout = () => {
     window.localStorage.clear()
-    window.location.assign(domain + '/account/user/logout')
+    window.location.assign(this.props.apiDomain + '/account/user/logout')
   }
 }
 
