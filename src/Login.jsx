@@ -150,8 +150,6 @@ class Authorized extends Component {
     fetch(infoUrl, fetchInit)
       .then(res => res.json())
       .then(res => {
-        const { data } = res
-
         // 执行用户的回调函数
         onLogin.forEach(c => {
           if (res.code === c.code) {
@@ -204,14 +202,15 @@ class Authorized extends Component {
     fetch(validateUrl, fetchInit)
       .then(res => res.json())
       .then(res => {
-        switch (res.code) {
-          case 0:
+        const code = res.code + ''
+        switch (code) {
+          case '0':
             callback && callback(true)
             break
-          case 1001:
+          case inValidateTokenCode:
             this.redirectLogin()
             break
-          case -1:
+          case '-1':
             callback && callback(false)
             console.error('请求失败', res.msg)
             break
@@ -235,6 +234,7 @@ Authorized.propTypes = {
   needReload: PropTypes.bool,                       // 是否需要reload，项目中存在 SL过早实例化请求对象 的问题的，这一项需要传true
   apiDomain: PropTypes.string.isRequired,           // 接口请求地址
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
+  inValidateTokenCode: PropTypes.string,            // 用户自定义的token无效的code
   className: PropTypes.string,                      // Login组件 的 className
   style: PropTypes.object,                          // Login组件 的 style
   needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画
@@ -245,6 +245,7 @@ Authorized.defaultProps = {
   needReload: false,
   apiDomain: '',
   onLogin: [],
+  inValidateTokenCode: 1001,
   className: '',
   style: { height: '100%', width: '100%' },
   needDefaultAnimation: false
