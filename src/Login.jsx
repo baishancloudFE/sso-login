@@ -234,7 +234,7 @@ Authorized.propTypes = {
   needReload: PropTypes.bool,                       // 是否需要reload，项目中存在 SL过早实例化请求对象 的问题的，这一项需要传true
   apiDomain: PropTypes.string.isRequired,           // 接口请求地址
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
-  inValidateTokenCode: PropTypes.string,            // 用户自定义的token无效的code
+  inValidateTokenCode: PropTypes.number,            // 用户自定义的token无效的code
   className: PropTypes.string,                      // Login组件 的 className
   style: PropTypes.object,                          // Login组件 的 style
   needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画
