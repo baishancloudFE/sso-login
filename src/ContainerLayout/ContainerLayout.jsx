@@ -124,6 +124,7 @@ export class ContainerLayout extends React.Component {
               marginRight: 15,
               fontSize: 16
             }}>
+              {/* <Button icon="qq" style={{ marginRight: 32 }} onClick={() => { window.open('tencent://message/?uin=2923218206&Site=JooIT.com&Menu=yes') }}>联系我们</Button> */}
               <Button icon="arrows-alt" style={{ marginRight: 32 }} onClick={toggleFullScreen}>全屏</Button>
               <span style={{ marginRight: 12 }}>{JSON.parse(localStorage.getItem('cname')) || '未登录'}</span>
               <Popconfirm title='确定注销当前账号吗?' onConfirm={() => logout(apiDomain)}>

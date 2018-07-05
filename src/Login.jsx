@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { parseUrlParams, removeParameter, isEmpty, setLocalStorage, getLocalStorage } from './function'
+import { parseUrlParams, isEmpty, setLocalStorage, getLocalStorage } from './function'
 import './Login.scss'
 import { ContainerLayout } from './ContainerLayout/index'
 import { CheckPermission } from './CheckPermission'
@@ -32,7 +32,6 @@ const defaultConfig = {
   serverValidate: '/account/token/validate',
   serverLogout: '/account/user/logout',
 }
-const jwtToken = getLocalStorage('jwtToken')
 
 class Authorized extends Component {
   constructor(props) {
@@ -50,11 +49,13 @@ class Authorized extends Component {
   static ContainerLayout = ContainerLayout
   static CheckPermission = CheckPermission
 
+  // 静态方法：退出登录
   static logout(domain) {
     window.localStorage.clear()
     window.location.assign(domain + '/account/user/logout')
   }
 
+  // 静态方法：在业务请求时发现 token 失效后的处理
   static onTokenInvalid(domain) {
     window.localStorage.clear()
     setLocalStorage('currentRoute', window.location.hash.replace('#', '')) // token失效时记录当前页面路由
@@ -95,6 +96,10 @@ class Authorized extends Component {
     )
   }
 
+  getJwtToken = () => {
+    return getLocalStorage('jwtToken')
+  }
+
   login() {
     return new Promise((resolve, reject) => {
       const query = parseUrlParams(location.href)
@@ -103,6 +108,8 @@ class Authorized extends Component {
       if (!isEmpty(query)) {
         ticket = query.ticket
 
+        this.log('ticket', ticket)
+
         const pathName = location.pathname || ''
         const param = location.hash.replace(/\?ticket=[^&]*/, '')
         const url = `${pathName}${param}`
@@ -110,15 +117,20 @@ class Authorized extends Component {
         history.pushState(null, '', url)
       }
 
-      if (!jwtToken) {
+      const token = this.getJwtToken()
+      this.log('token', token)
+      if (!token) {
         this.checkLogin(ticket, (isTokenValidate) => {
           resolve(isTokenValidate)
         })
       } else {
-        // resolve(true)
-        this.validateToken((isTokenValidate) => {
-          resolve(isTokenValidate)
-        })
+        if (this.needCheckTokenValidity) {
+          this.validateToken((isTokenValidate) => {
+            resolve(isTokenValidate)
+          })
+        } else {
+          resolve(true)
+        }
       }
     })
   }
@@ -157,13 +169,14 @@ class Authorized extends Component {
           }
         })
 
+        this.log('view接口获得的返回值', res)
+
         switch (res.code) {
           case 0:
             // 将所有的用户信息存储在localStorage
-            const userInfo = res.data
-            Object.keys(userInfo).forEach(k => {
-              setLocalStorage(k, userInfo[k])
-            })
+            this.props.storeData(res.data)
+            setLocalStorage('jwtToken', res.data && res.data.jwtToken)
+
 
             // 处理旧SL只在项目第一次加载时实例化fetch请求对象，导致正确的token无法正常设置的问题
             if (needReload) {
@@ -193,7 +206,7 @@ class Authorized extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/jsoncharset=utf-8',
-        'Authorization': `Bearer ${!!jwtToken ? jwtToken : ''}`
+        'Authorization': `Bearer ${!!this.getJwtToken() ? this.getJwtToken() : ''}`
       }
     }
 
@@ -202,12 +215,14 @@ class Authorized extends Component {
     fetch(validateUrl, fetchInit)
       .then(res => res.json())
       .then(res => {
+        this.log('validate接口获得的返回值', res)
+
         const code = res.code + ''
         switch (code) {
           case '0':
             callback && callback(true)
             break
-          case inValidateTokenCode:
+          case this.props.inValidateTokenCode:
             this.redirectLogin()
             break
           case '-1':
@@ -228,6 +243,14 @@ class Authorized extends Component {
     window.localStorage.clear()
     window.location.assign(this.props.apiDomain + '/account/user/logout')
   }
+
+  // 打印调试日志的开关（只有在LocalStorage中把 displayLog 设置为 true 才可以查看日志）
+  log = (...content) => {
+    const displayLog = getLocalStorage('displaySsoLog')
+    if (displayLog) {
+      console.log(...content)
+    }
+  }
 }
 
 Authorized.propTypes = {
@@ -238,7 +261,9 @@ Authorized.propTypes = {
   className: PropTypes.string,                      // Login组件 的 className
   style: PropTypes.object,                          // Login组件 的 style
   needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画
-  animation: PropTypes.node                         // 自定义的加载动画
+  animation: PropTypes.node,                        // 自定义的加载动画
+  storeData: PropTypes.func,                        // 自定义存储用户信息的方式
+  needCheckTokenValidity: PropTypes.bool,           // 是否需要在页面刷新的时候验证token的有效性
 }
 
 Authorized.defaultProps = {
@@ -248,7 +273,14 @@ Authorized.defaultProps = {
   inValidateTokenCode: 1001,
   className: '',
   style: { height: '100%', width: '100%' },
-  needDefaultAnimation: false
+  needDefaultAnimation: false,
+  storeData: function (userInfo) {
+    Object.keys(userInfo).forEach(k => {
+      const newValue = JSON.stringify(userInfo[k])
+      window.localStorage.setItem(k, newValue)
+    })
+  },
+  needCheckTokenValidity: true
 }
 
 export default Authorized

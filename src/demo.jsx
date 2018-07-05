@@ -12,8 +12,8 @@ const callbacks = [{
   }
 }]
 
-// const domain = "http://test-roster.i.trpcdn.net"
-const domain = "http://test-pps.i.trpcdn.net"
+const domain = "http://test-roster.i.trpcdn.net"
+// const domain = "http://test-pps.i.trpcdn.net"
 
 export default () => {
   return (
