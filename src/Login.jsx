@@ -51,13 +51,21 @@ class Authorized extends Component {
 
   // 静态方法：退出登录
   static logout(domain) {
-    window.localStorage.clear()
+    // window.localStorage.clear()
+    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
+    clearItems.forEach(item => {
+      window.localStorage.removeItem(item)
+    })
     window.location.assign(domain + '/account/user/logout')
   }
 
   // 静态方法：在业务请求时发现 token 失效后的处理
   static onTokenInvalid(domain) {
-    window.localStorage.clear()
+    // window.localStorage.clear()
+    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
+    clearItems.forEach(item => {
+      window.localStorage.removeItem(item)
+    })
     setLocalStorage('currentRoute', window.location.hash.replace('#', '')) // token失效时记录当前页面路由
     setLocalStorage('currentUrl', window.location.href)                    // token失效时记录当前页面的浏览器路径
     window.location.assign(domain + '/account/user/login')
@@ -139,7 +147,11 @@ class Authorized extends Component {
     const { serverLogin } = this.config
     const { apiDomain } = this.props
 
-    window.localStorage.clear()
+    // window.localStorage.clear()
+    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
+    clearItems.forEach(item => {
+      window.localStorage.removeItem(item)
+    })
     setLocalStorage('currentRoute', window.location.hash.replace('#', ''))// token失效时记录当前页面路由
     setLocalStorage('currentUrl', location.href)                          // token失效时记录当前页面的浏览器路径
     location.assign(apiDomain + serverLogin)
@@ -240,7 +252,11 @@ class Authorized extends Component {
       })
   }
   logout = () => {
-    window.localStorage.clear()
+    // window.localStorage.clear()
+    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
+    clearItems.forEach(item => {
+      window.localStorage.removeItem(item)
+    })
     window.location.assign(this.props.apiDomain + '/account/user/logout')
   }
 
