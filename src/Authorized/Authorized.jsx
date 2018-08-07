@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { parseUrlParams, isEmpty, setLocalStorage, getLocalStorage } from './function'
-import './Login.scss'
-import { ContainerLayout } from './ContainerLayout/index'
-import { CheckPermission } from './CheckPermission'
+import { parseUrlParams, isEmpty, setLocalStorage, getLocalStorage } from '../function'
+import './index.scss'
+
 //                    _ooOoo_
 //                   o8888888o
 //                   88\" . \"88
@@ -44,31 +43,6 @@ class Authorized extends Component {
     this.state = {
       isLogin: false
     }
-  }
-
-  static ContainerLayout = ContainerLayout
-  static CheckPermission = CheckPermission
-
-  // 静态方法：退出登录
-  static logout(domain) {
-    // window.localStorage.clear()
-    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
-    clearItems.forEach(item => {
-      window.localStorage.removeItem(item)
-    })
-    window.location.assign(domain + '/account/user/logout')
-  }
-
-  // 静态方法：在业务请求时发现 token 失效后的处理
-  static onTokenInvalid(domain) {
-    // window.localStorage.clear()
-    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
-    clearItems.forEach(item => {
-      window.localStorage.removeItem(item)
-    })
-    setLocalStorage('currentRoute', window.location.hash.replace('#', '')) // token失效时记录当前页面路由
-    setLocalStorage('currentUrl', window.location.href)                    // token失效时记录当前页面的浏览器路径
-    window.location.assign(domain + '/account/user/login')
   }
 
   componentWillMount() {

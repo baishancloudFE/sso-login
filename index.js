@@ -1,2 +1,2 @@
-import Component from './src/'
-export default Component
+import { withLogin, logout, handleTokenInvalid } from './src/'
+export { withLogin, logout, handleTokenInvalid }

@@ -1,2 +1,2 @@
-import Component from './Login'
-export default Component
+import { withLogin, logout, handleTokenInvalid } from './WithLogin'
+export { withLogin, logout, handleTokenInvalid }
