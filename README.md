@@ -175,3 +175,7 @@ handleTokenInvalid(apiDomain)
 # 1.0.0
 > 2018.08.07
 > - 🌟 改为装饰器模式，onTokenInvalid 改为 handleTokenInvalid
+
+# 1.0.1
+> 2018.08.20
+> - 🌟 增加inValidateViewCode属性，支持用户自定义view接口异常情况

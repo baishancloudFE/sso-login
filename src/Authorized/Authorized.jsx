@@ -170,7 +170,7 @@ class Authorized extends Component {
             }
             callback && callback(true)
             break
-          case 605:// 无效的ticket(平台服务端拿到的ticket是空的)
+          case this.props.inValidateViewCode:// 无效的ticket(平台服务端拿到的ticket是空的)
           case -1: // 无效的ticket(ticket过期了，好像是10s过期，who cares，反正就是ticket不可用)
             this.redirectLogin()
             break
@@ -249,6 +249,7 @@ Authorized.propTypes = {
   style: PropTypes.object,                          // Login组件 的 style
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
   inValidateTokenCode: PropTypes.number,            // 用户自定义的token无效的code
+  inValidateViewCode: PropTypes.any,                // view接口异常的code
   animation: PropTypes.node,                        // 自定义的加载动画
   storeData: PropTypes.func,                        // 自定义存储用户信息的方式
   needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画
@@ -261,6 +262,7 @@ Authorized.defaultProps = {
   apiDomain: '',
   onLogin: [],
   inValidateTokenCode: 1001,
+  inValidateViewCode: 605,
   className: '',
   style: { height: '100%', width: '100%' },
   needDefaultAnimation: false,
