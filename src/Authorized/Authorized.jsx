@@ -106,7 +106,7 @@ class Authorized extends Component {
           resolve(isTokenValidate)
         })
       } else {
-        if (this.needCheckTokenValidity) {
+        if (this.props.needCheckTokenValidity) {
           this.validateToken((isTokenValidate) => {
             resolve(isTokenValidate)
           })

@@ -179,3 +179,7 @@ handleTokenInvalid(apiDomain)
 # 1.0.1
 > 2018.08.20
 > - 🌟 增加inValidateViewCode属性，支持用户自定义view接口异常情况
+
+# 1.0.2
+> 2018.09.10
+> - 🐞 修复 needCheckTokenValidity 变量引用来源错误，导致validate接口没有调用的bug

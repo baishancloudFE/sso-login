@@ -93,3 +93,7 @@
 # 1.0.0
 > 2018.08.07
 > - 🌟 改为装饰器模式，onTokenInvalid 改为 handleTokenInvalid
+
+# 1.0.2
+> 2018.09.10
+> - 🐞 修复 needCheckTokenValidity 变量引用来源错误，导致validate接口没有调用的bug
