@@ -1,2 +1,1 @@
-import { withLogin, logout, handleTokenInvalid } from './WithLogin'
-export { withLogin, logout, handleTokenInvalid }
+export { withLogin, logout, handleTokenInvalid } from './SSOLogin'

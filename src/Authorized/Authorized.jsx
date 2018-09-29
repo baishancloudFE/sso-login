@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { parseUrlParams, isEmpty, setLocalStorage, getLocalStorage } from '../function'
+import { parseUrlParams, setLocalStorage, getLocalStorage } from './function'
 import './index.scss'
 
 //                    _ooOoo_
@@ -23,54 +23,48 @@ import './index.scss'
 //                    `=---='",
 // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //          佛祖保佑       永无BUG
-
-const defaultConfig = {
-  devLogin: 'http://test-roster.i.trpcdn.net/staff-center',
-  serverLogin: '/account/user/login',
-  serverView: '/account/user/view',
-  serverValidate: '/account/token/validate',
-  serverLogout: '/account/user/logout',
+const fetchInit = {
+  method: 'GET',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/jsoncharset=utf-8'
+  }
 }
+const defaultAnimation = (
+  <div id="sso-loading-wrapper">
+    <div id="sso-loading-text">LOADING</div>
+    <div id="sso-loading-content"></div>
+  </div>
+)
 
 class Authorized extends Component {
   constructor(props) {
     super(props)
 
-    this.config = {
-      ...defaultConfig
+    this.customVariables = {
+      apiLogin: '/account/user/login',
+      apiView: '/account/user/view',
+      apiValidate: '/account/token/validate',
+      apiLogout: '/account/user/logout',
     }
 
     this.state = {
-      isLogin: false
+      hasSuccessLogined: false
     }
   }
 
-  componentWillMount() {
-    this.login().then((isTokenValidate) => {
-      // const initialRoute = getLocalStorage('currentRoute')
-      // if (initialRoute) {
-      //   // 给浏览器的 hash 地址赋值并不会导致页面刷新，所以要重写 href
-      //   window.location.href = '/#' + initialRoute
-      //   localStorage.removeItem('currentRoute')
-      // }
-      this.setState({ isLogin: isTokenValidate })
-    })
+  componentDidMount() {
+    this.login()
   }
 
   render() {
-    const { isLogin } = this.state
+    const { hasSuccessLogined } = this.state
     const { className, style, needDefaultAnimation, animation } = this.props
-    const defaultAnimation = (
-      <div id="sso-loading-wrapper">
-        <div id="sso-loading-text">LOADING</div>
-        <div id="sso-loading-content"></div>
-      </div>
-    )
 
     return (
       <div className={className} style={style}>
         {
-          isLogin ?
+          hasSuccessLogined ?
             this.props.children :
             (needDefaultAnimation ? defaultAnimation : (animation || null))
         }
@@ -78,76 +72,54 @@ class Authorized extends Component {
     )
   }
 
-  getJwtToken = () => {
-    return getLocalStorage('jwtToken')
-  }
+  /**
+   * 登录
+   */
+  login = () => {
+    const token = this.getJwtToken()
+    this.log('token', token)
 
-  login() {
-    return new Promise((resolve, reject) => {
+    if (!token) {
       const query = parseUrlParams(location.href)
-      let ticket = null
-
-      if (!isEmpty(query)) {
-        ticket = query.ticket
+      if (query && query.ticket) {
+        const ticket = query.ticket
 
         this.log('ticket', ticket)
 
+        this.getUserInfo(ticket, (isTokenValidate) => this.setState({ hasSuccessLogined: isTokenValidate }))
+
+        // 拿到 ticket 后将 url 中带着的 ticket 去掉
         const pathName = location.pathname || ''
         const param = location.hash.replace(/\?ticket=[^&]*/, '')
         const url = `${pathName}${param}`
-
         history.pushState(null, '', url)
-      }
-
-      const token = this.getJwtToken()
-      this.log('token', token)
-      if (!token) {
-        this.checkLogin(ticket, (isTokenValidate) => {
-          resolve(isTokenValidate)
-        })
       } else {
-        if (this.props.needCheckTokenValidity) {
-          this.validateToken((isTokenValidate) => {
-            resolve(isTokenValidate)
-          })
-        } else {
-          resolve(true)
-        }
+        this.setState({ hasSuccessLogined: false })
       }
-    })
-  }
-
-  redirectLogin() {
-    const { serverLogin } = this.config
-    const { apiDomain } = this.props
-
-    // window.localStorage.clear()
-    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
-    clearItems.forEach(item => {
-      window.localStorage.removeItem(item)
-    })
-    setLocalStorage('currentRoute', window.location.hash.replace('#', ''))// token失效时记录当前页面路由
-    setLocalStorage('currentUrl', location.href)                          // token失效时记录当前页面的浏览器路径
-    location.assign(apiDomain + serverLogin)
-
-  }
-
-  checkLogin = (ticket, callback) => {
-    const { serverView } = this.config
-    const { apiDomain, needReload, onLogin } = this.props
-    const fetchInit = {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/jsoncharset=utf-8'
+    } else {
+      if (this.props.needCheckTokenValidity) {
+        this.validateToken(isTokenValidate => this.setState({ hasSuccessLogined: isTokenValidate }))
+      } else {
+        this.setState({ hasSuccessLogined: true })
       }
     }
-    const userInfoUrl = apiDomain + serverView
+  }
+
+  /**
+   * 获取用户信息（带着 ticket 去请求 /account/user/view 接口）
+   * @param {func} callback: 得到 /account/user/view 接口的响应后的回调函数
+   */
+  getUserInfo = (ticket, callback) => {
+    const { apiView } = this.customVariables
+    const { apiDomain, needReload, onLogin, inValidateViewCode } = this.props
+
+    const userInfoUrl = apiDomain + apiView
     const infoUrl = ticket ? (`${userInfoUrl}?ticket=${ticket}`) : userInfoUrl
 
     fetch(infoUrl, fetchInit)
       .then(res => res.json())
       .then(res => {
+        this.log('view接口获得的返回值', res)
         // 执行用户的回调函数
         onLogin.forEach(c => {
           if (res.code === c.code) {
@@ -155,14 +127,12 @@ class Authorized extends Component {
           }
         })
 
-        this.log('view接口获得的返回值', res)
-
-        switch (res.code) {
-          case 0:
+        const code = res.code + ''
+        switch (code) {
+          case '0':
             // 将所有的用户信息存储在localStorage
             this.props.storeData(res.data)
             setLocalStorage('jwtToken', res.data && res.data.jwtToken)
-
 
             // 处理旧SL只在项目第一次加载时实例化fetch请求对象，导致正确的token无法正常设置的问题
             if (needReload) {
@@ -170,35 +140,33 @@ class Authorized extends Component {
             }
             callback && callback(true)
             break
-          case this.props.inValidateViewCode:// 无效的ticket(平台服务端拿到的ticket是空的)
-          case -1: // 无效的ticket(ticket过期了，好像是10s过期，who cares，反正就是ticket不可用)
+          case inValidateViewCode:// 无效的ticket(平台服务端拿到的ticket是空的)
+          case '-1': // 无效的ticket(ticket过期了，好像是10s过期，who cares，反正就是ticket不可用)
             this.redirectLogin()
             break
         }
         return res
       })
       .catch((err) => {
-        console.error('请求失败', err)
+        console.error('请求 /account/user/view 接口失败!', err)
       })
   }
 
-  // 验证 jwtToken 的有效性
+  /**
+   * 验证 jwtToken 的有效性（请求 /account/token/validate 接口）
+   * @param {func} callback 得到 /account/token/validate 接口的响应后的回调函数
+   */
   validateToken(callback) {
-    const { serverValidate } = this.config
-    const { apiDomain } = this.props
-
-    const fetchInit = {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/jsoncharset=utf-8',
-        'Authorization': `Bearer ${!!this.getJwtToken() ? this.getJwtToken() : ''}`
-      }
+    const curFetchConfig = JSON.parse(JSON.stringify(fetchInit))
+    if (!!this.getJwtToken()) {
+      curFetchConfig.headers.Authorization = `Bearer ${this.getJwtToken()}`
     }
 
-    const validateUrl = apiDomain + serverValidate
+    const { apiValidate } = this.customVariables
+    const { apiDomain, inValidateTokenCode } = this.props
+    const validateUrl = apiDomain + apiValidate
 
-    fetch(validateUrl, fetchInit)
+    fetch(validateUrl, curFetchConfig)
       .then(res => res.json())
       .then(res => {
         this.log('validate接口获得的返回值', res)
@@ -208,12 +176,12 @@ class Authorized extends Component {
           case '0':
             callback && callback(true)
             break
-          case this.props.inValidateTokenCode:
+          case inValidateTokenCode:
             this.redirectLogin()
             break
           case '-1':
             callback && callback(false)
-            console.error('请求失败', res.msg)
+            console.error('请求 /account/token/validate 接口响应code=-1', res.msg)
             break
           default:
             this.logout()
@@ -222,25 +190,56 @@ class Authorized extends Component {
         return res
       })
       .catch((err) => {
-        console.error('请求失败', err)
+        console.error('请求 /account/token/validate 接口失败', err)
       })
   }
-  logout = () => {
-    // window.localStorage.clear()
-    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
-    clearItems.forEach(item => {
-      window.localStorage.removeItem(item)
-    })
-    window.location.assign(this.props.apiDomain + '/account/user/logout')
+
+  /**
+   * 重新请求 /account/user/login 接口
+   */
+  redirectLogin() {
+    const { apiLogin } = this.customVariables
+    const { apiDomain } = this.props
+
+    this.clearLocalStorage()
+    setLocalStorage('currentRoute', window.location.hash.replace('#', ''))// token失效时记录当前页面路由
+    setLocalStorage('currentUrl', location.href)                          // token失效时记录当前页面的浏览器路径
+
+    window.location.assign(apiDomain + apiLogin)
   }
 
-  // 打印调试日志的开关（只有在LocalStorage中把 displayLog 设置为 true 才可以查看日志）
+  /**
+   * 退出登录
+   */
+  logout = () => {
+    this.clearLocalStorage()
+    window.location.assign(this.props.apiDomain + this.customVariables.apiLogout)
+  }
+
+  /**
+   * 打印调试日志的开关（只有在LocalStorage中把 displayLog 设置为 true 才可以查看日志）
+   */
   log = (...content) => {
     const displayLog = getLocalStorage('displaySsoLog')
     if (displayLog) {
       console.log(...content)
     }
   }
+
+  /**
+   * 自定义的清理 window.localStorage，保留 用户自己需要存储在 window.localStorage 的变量
+   */
+  clearLocalStorage = () => {
+    const clearItems = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
+    clearItems.forEach(item => {
+      window.localStorage.removeItem(item)
+    })
+  }
+
+  /**
+   * 从 localStorage 中获取 jwtToken 数据
+   */
+  getJwtToken = () => getLocalStorage('jwtToken')
 }
 
 Authorized.propTypes = {
@@ -249,7 +248,7 @@ Authorized.propTypes = {
   style: PropTypes.object,                          // Login组件 的 style
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
   inValidateTokenCode: PropTypes.number,            // 用户自定义的token无效的code
-  inValidateViewCode: PropTypes.any,                // view接口异常的code
+  inValidateViewCode: PropTypes.number,             // view接口异常的code
   animation: PropTypes.node,                        // 自定义的加载动画
   storeData: PropTypes.func,                        // 自定义存储用户信息的方式
   needDefaultAnimation: PropTypes.bool,             // 是否需要内置的loading动画

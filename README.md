@@ -6,7 +6,7 @@
 
 下载 npm 包
 ```jsx
-sl add -c sso-login
+npm i --save sso-login
 ```
 
 在 bsy.json 中登记
@@ -48,11 +48,13 @@ export class App extends React.Component {
 | onLogin    | 非必填|   在获取到用户信息后的特殊处理    |   [{code:xxx,function:()=>{}}]    | -
 | storeData    | 非必填|   在获取到用户信息后的特殊处理    |   见下方    | -
 | inValidateTokenCode    | 非必填|   用户自定义的token无效的code    |  number   | 1001
+| inValidateViewCode    | 非必填|   用户自定义的view接口异常的code    |  number   | 605
 | needReload | 非必填| 是否需要reload，项目中存在 SL过早实例化请求对象 的问题的，这一项需要传true      |   boolean    | false
 | needDefaultAnimation | 非必填   |   是否需要内置的loading动画    |   boolean    | false
 | needCheckTokenValidity | 非必填   |   是否需要在页面刷新的时候验证token的有效性    |   boolean    | true
 
 ```jsx
+// storeData 的示例
 function (userInfo) {
     Object.keys(userInfo).forEach(k => {
       const newValue = JSON.stringify(userInfo[k])
@@ -183,3 +185,7 @@ handleTokenInvalid(apiDomain)
 # 1.0.2
 > 2018.09.10
 > - 🐞 修复 needCheckTokenValidity 变量引用来源错误，导致validate接口没有调用的bug
+
+# 1.0.3
+> 2018.09.29
+> - 💄 优化代码
