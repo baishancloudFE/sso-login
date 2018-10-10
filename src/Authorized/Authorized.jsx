@@ -81,21 +81,17 @@ class Authorized extends Component {
 
     if (!token) {
       const query = parseUrlParams(location.href)
-      if (query && query.ticket) {
-        const ticket = query.ticket
+      const ticket = query && query.ticket
 
-        this.log('ticket', ticket)
+      this.log('ticket', ticket)
 
-        this.getUserInfo(ticket, (isTokenValidate) => this.setState({ hasSuccessLogined: isTokenValidate }))
+      this.getUserInfo(ticket, (isTokenValidate) => this.setState({ hasSuccessLogined: isTokenValidate }))
 
-        // 拿到 ticket 后将 url 中带着的 ticket 去掉
-        const pathName = location.pathname || ''
-        const param = location.hash.replace(/\?ticket=[^&]*/, '')
-        const url = `${pathName}${param}`
-        history.pushState(null, '', url)
-      } else {
-        this.setState({ hasSuccessLogined: false })
-      }
+      // 拿到 ticket 后将 url 中带着的 ticket 去掉
+      const pathName = location.pathname || ''
+      const param = location.hash.replace(/\?ticket=[^&]*/, '')
+      const url = `${pathName}${param}`
+      history.pushState(null, '', url)
     } else {
       if (this.props.needCheckTokenValidity) {
         this.validateToken(isTokenValidate => this.setState({ hasSuccessLogined: isTokenValidate }))
@@ -140,7 +136,7 @@ class Authorized extends Component {
             }
             callback && callback(true)
             break
-          case inValidateViewCode:// 无效的ticket(平台服务端拿到的ticket是空的)
+          case inValidateViewCode + '':// 无效的ticket(平台服务端拿到的ticket是空的)
           case '-1': // 无效的ticket(ticket过期了，好像是10s过期，who cares，反正就是ticket不可用)
             this.redirectLogin()
             break
