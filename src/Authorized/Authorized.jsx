@@ -286,7 +286,7 @@ Authorized.defaultProps = {
   onLogin: [],
   inValidateTokenCode: 1001,
   inValidateViewCode: 605,
-  needDefaultAnimation: true,
+  needDefaultAnimation: false,
   storeData: function (userInfo) {
     Object.keys(userInfo).forEach(k => {
       const newValue = JSON.stringify(userInfo[k])

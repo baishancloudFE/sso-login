@@ -1,5 +1,6 @@
 import React from 'react'
 import Authorized from './Authorized/Authorized'
+import { setLocalStorage } from './Authorized/function'
 
 // 在本组件中存储在 localStorage 中的变量 key 值
 const customStoreKeys = ['jwtToken', 'currentRoute', 'currentUrl', 'menu', 'apps', 'cname', 'apis', 'resources', 'name', 'JWT_TOKEN', 'MENU_INFO']
