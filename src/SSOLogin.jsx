@@ -41,9 +41,7 @@ const withLogin = (apiDomain, config) => (WrappedComponent) => class extends Rea
     console.log('%csso-login文档传送门👇\n%c https://www.npmjs.com/package/sso-login', 'text-shadow:1px 1px 1px rgba(0,0,0,0.2);font-size:24px', 'font-size:14px')
 
     return (
-      <Authorized apiDomain={apiDomain} {...config}>
-        <WrappedComponent />
-      </Authorized>
+      <Authorized apiDomain={apiDomain} realNode={<WrappedComponent />} {...config} />
     )
   }
 }

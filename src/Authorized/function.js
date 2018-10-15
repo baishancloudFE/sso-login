@@ -40,7 +40,7 @@ function getLocalStorage(key) {
     return false
   }
 
-  return JSON.parse(window.localStorage.getItem(key))
+  return JSON.parse(window.localStorage.getItem(key) || null)
 }
 
 

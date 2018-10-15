@@ -42,8 +42,6 @@ export class App extends React.Component {
 | 参数        | 是否必填   | 说明    |  类型  |  默认值
 | --------   | ----------:| -----:   | :----: |  :----: |
 | apiDomain   | 必填     | 接口请求地址      |   string    | -
-| className    | 非必填|   Login组件 的 className    |   string    | -
-| style    | 非必填|   Login组件 的 style    |   object    | -
 | animation    | 非必填|   自定义的加载动画    |   dom节点    | -
 | onLogin    | 非必填|   在获取到用户信息后的特殊处理    |   [{code:xxx,function:()=>{}}]    | -
 | storeData    | 非必填|   在获取到用户信息后的特殊处理    |   见下方    | -
@@ -177,6 +175,7 @@ handleTokenInvalid(apiDomain)
 # 1.0.0
 > 2018.08.07
 > - 🌟 改为装饰器模式，onTokenInvalid 改为 handleTokenInvalid
+>   - 这是一次不兼容改动，因为在维护 sso-login 组件的过程中我发现，它是一个功能型组件，并不渲染任何实际的内容，只是在渲染实际的业务代码之前为其接入 SSO 鉴权服务并获取用户信息，所以改为 高阶组件 的形式，与容器组件区分开来。
 
 # 1.0.1
 > 2018.08.20
@@ -193,3 +192,11 @@ handleTokenInvalid(apiDomain)
 # 1.0.4
 > 2018.10.10
 > - 🐞 修复刷新页面检测到没有 token 后直接显示登录失败的bug
+
+# 1.0.5
+> 2018.10.15
+> - 🌟 ！！不兼容改动：去掉了 className 和 style 两个属性
+    - 这是为了让 sso-login 组件更符合一个功能型组件的标准（不渲染任何实际的内容，也不去影响实际业务代码的渲染）
+  - 🌟 对用户无感知，仅为内部代码优化
+    - 优化内容一：不论 SSO 登录是成功还是失败，都正常渲染业务代码，并在控制台输出了 SSO 登录的结果，便于用户感知 SSO 登录是否成功
+    - 优化内容二：加入 componentDidCatch 来捕获业务代码的错误

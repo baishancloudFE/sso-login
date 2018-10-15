@@ -49,7 +49,8 @@ class Authorized extends Component {
     }
 
     this.state = {
-      hasSuccessLogined: false
+      hasSuccessLogined: false,
+      isLogining: true
     }
   }
 
@@ -57,18 +58,25 @@ class Authorized extends Component {
     this.login()
   }
 
+  componentDidCatch(error, info) {
+    this.setState({ hasError: true })
+  }
+
   render() {
-    const { hasSuccessLogined } = this.state
-    const { className, style, needDefaultAnimation, animation } = this.props
+    if (this.state.hasError) {
+      return <h1>Oops! Something went wrong.</h1>
+    }
+
+    const { hasSuccessLogined, isLogining } = this.state
+    const { needDefaultAnimation, animation, realNode } = this.props
+    const realAnimation = needDefaultAnimation ? defaultAnimation : (animation || null)
+
+    this.LogLoginedResult(hasSuccessLogined, isLogining)
 
     return (
-      <div className={className} style={style}>
-        {
-          hasSuccessLogined ?
-            this.props.children :
-            (needDefaultAnimation ? defaultAnimation : (animation || null))
-        }
-      </div>
+      <React.Fragment>
+        {isLogining ? realAnimation : realNode}
+      </React.Fragment>
     )
   }
 
@@ -85,20 +93,27 @@ class Authorized extends Component {
 
       this.log('ticket', ticket)
 
-      this.getUserInfo(ticket, (isTokenValidate) => this.setState({ hasSuccessLogined: isTokenValidate }))
-
-      // 拿到 ticket 后将 url 中带着的 ticket 去掉
-      const pathName = location.pathname || ''
-      const param = location.hash.replace(/\?ticket=[^&]*/, '')
-      const url = `${pathName}${param}`
-      history.pushState(null, '', url)
+      this.getUserInfo(ticket, (isTokenValidate) => {
+        this.setState({ hasSuccessLogined: isTokenValidate, isLogining: false })
+        this.removeTicketFromUrl()
+      })
     } else {
       if (this.props.needCheckTokenValidity) {
-        this.validateToken(isTokenValidate => this.setState({ hasSuccessLogined: isTokenValidate }))
+        this.validateToken(isTokenValidate => this.setState({ hasSuccessLogined: isTokenValidate, isLogining: false }))
       } else {
-        this.setState({ hasSuccessLogined: true })
+        this.setState({ hasSuccessLogined: true, isLogining: false })
       }
     }
+  }
+
+  /**
+   * 将 url 中带着的 ticket 去掉
+   */
+  removeTicketFromUrl = () => {
+    const pathName = location.pathname || ''
+    const param = location.hash.replace(/\?ticket=[^&]*/, '')
+    const url = `${pathName}${param}`
+    history.pushState(null, '', url)
   }
 
   /**
@@ -213,6 +228,21 @@ class Authorized extends Component {
   }
 
   /**
+   * 打印 SSO 登录结果
+   * @param {bool}} hasSuccessLogined: 是否登录成功
+   * @param {bool}} isLogining: 是否正在登录
+   */
+  LogLoginedResult = (hasSuccessLogined, isLogining) => {
+    if (!isLogining) {
+      if (!hasSuccessLogined) {
+        console.error('您的 SSO 登录没有成功！请检查登录流程！')
+      } else {
+        console.log('您的 SSO 登录已经成功！')
+      }
+    }
+  }
+
+  /**
    * 打印调试日志的开关（只有在LocalStorage中把 displayLog 设置为 true 才可以查看日志）
    */
   log = (...content) => {
@@ -240,8 +270,6 @@ class Authorized extends Component {
 
 Authorized.propTypes = {
   apiDomain: PropTypes.string.isRequired,           // 接口请求地址
-  className: PropTypes.string,                      // Login组件 的 className
-  style: PropTypes.object,                          // Login组件 的 style
   onLogin: PropTypes.array,                         // 在获取到用户信息后的特殊处理
   inValidateTokenCode: PropTypes.number,            // 用户自定义的token无效的code
   inValidateViewCode: PropTypes.number,             // view接口异常的code
@@ -258,9 +286,7 @@ Authorized.defaultProps = {
   onLogin: [],
   inValidateTokenCode: 1001,
   inValidateViewCode: 605,
-  className: '',
-  style: { height: '100%', width: '100%' },
-  needDefaultAnimation: false,
+  needDefaultAnimation: true,
   storeData: function (userInfo) {
     Object.keys(userInfo).forEach(k => {
       const newValue = JSON.stringify(userInfo[k])
