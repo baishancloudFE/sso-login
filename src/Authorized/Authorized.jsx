@@ -63,9 +63,9 @@ class Authorized extends Component {
   }
 
   render() {
-    if (this.state.hasError) {
-      return <h1>Oops! Something went wrong.</h1>
-    }
+    // if (this.state.hasError) {
+    //   return <h1>Oops! Something went wrong.</h1>
+    // }
 
     const { hasSuccessLogined, isLogining } = this.state
     const { needDefaultAnimation, animation, realNode } = this.props
@@ -89,7 +89,7 @@ class Authorized extends Component {
 
     if (!token) {
       const query = parseUrlParams(location.href)
-      const ticket = query && query.ticket
+      const ticket = (query && query.ticket).replace('#/', '')
 
       this.log('ticket', ticket)
 
@@ -245,10 +245,10 @@ class Authorized extends Component {
   /**
    * 打印调试日志的开关（只有在LocalStorage中把 displayLog 设置为 true 才可以查看日志）
    */
-  log = (...content) => {
+  log = () => {
     const displayLog = getLocalStorage('displaySsoLog')
     if (displayLog) {
-      console.log(...content)
+      console.log.apply(console, ["【sso】", ...arguments])
     }
   }
 
